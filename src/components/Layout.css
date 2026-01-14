@@ -1,0 +1,77 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  height: 100vh;
+  background-color: var(--main-bg, #ffffff);
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+/* Dark mode for main content */
+[data-theme="dark"] .app-layout {
+  background-color: #1E293B;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--sidebar-width) !important;
+  width: calc(100% - var(--sidebar-width)) !important;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: visible;
+  background-color: #fafafa;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .main-content {
+  background-color: #1E293B;
+}
+
+.page-content {
+  flex: 1;
+  padding: 0;
+  overflow: visible !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 70px; /* Account for fixed topbar */
+}
+
+/* Reduce left/right padding for RTO Bucket tab */
+.page-content:has(.dashboard-container--rto-bucket) {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* Remove left/right padding for All Orders tab to allow full width */
+.page-content:has(.dashboard-container--all-orders) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Remove left/right padding for Playground page (tab content has its own padding) */
+.page-content:has(.playground-container) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .page-content {
+    padding: 0;
+  }
+}
+

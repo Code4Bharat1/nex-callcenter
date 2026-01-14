@@ -1,0 +1,80 @@
+/* Base navbar styles are loaded via <link> in index.html */
+/* Additional wallet-specific styles below */
+
+.wallet-section {
+  padding: 12px 16px;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu__icon{
+  fill: #6B7280;
+}
+
+.wallet-balance-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.wallet-amount {
+  font-weight: 600;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+}
+
+/* Smooth animation for onboarding tab movement */
+.menu li {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menu li.menu-item-moving {
+  transform: translateY(20px);
+  opacity: 0;
+}
+/* ===== Sidebar Brand / Logo ===== */
+.sidebar__brand {
+  padding: 0px 0px 0px; /* reduce vertical gap */
+  margin-bottom: 0px;
+}
+.brand__logo {
+  width: 150px !important;
+  max-height: 102px !important;
+  object-fit: contain;
+  display: block;
+  transform: scale(1.5); /* visually compensates PNG padding */
+}
+
+.brand__text {
+  display: none;
+}
+
+
+/* ===== Sidebar Search ===== */
+.sidebar__search {
+  padding: 0 10px 8px;   /* REDUCES GAP BELOW LOGO */
+}
+
+.search__container {
+  position: relative;
+}
+
+.search__input {
+  height: 38px;
+  padding-left: 36px;
+  font-size: 14px;
+}
+
+.sidebar__search {
+  padding: 0 16px 6px !important;
+  margin-top: 0 !important;
+}

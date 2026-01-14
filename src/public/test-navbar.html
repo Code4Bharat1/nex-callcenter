@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test React Navbar</title>
+    <link rel="stylesheet" href="/navbar.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: #f8f9fa;
+        }
+        
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: calc(var(--sidebar-width) + 32px);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: calc(var(--sidebar-collapsed-width) + 32px);
+            }
+        }
+        
+        .test-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- React Navbar will be mounted here -->
+        <div id="navbar-root"></div>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="test-content">
+                <h1>React Navbar Test</h1>
+                <p>This is a test page to verify the React Navbar component works correctly.</p>
+                <p>Try resizing the window to test the responsive behavior.</p>
+                <p>Click on different menu items to test navigation.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Navbar Component -->
+    <script src="/components/Navbar.js"></script>
+    
+    <!-- Mount the component -->
+    <script>
+        function App() {
+            const activePage = 'csv'; // Test with CSV active
+            const shop = 'test-shop.myshopify.com'; // Test shop parameter
+            
+            return React.createElement(Navbar, { 
+                activePage: activePage, 
+                shop: shop
+            });
+        }
+        
+        // Mount the React app
+        const root = ReactDOM.createRoot(document.getElementById('navbar-root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.loading-rectangular {
+  gap: 12px;
+}
+
+.loading-lottie-wrapper {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.loading-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.loading-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.loading-rectangular .loading-text {
+  margin-top: 4px;
+}
+
+.loading-inline span {
+  font-size: 14px;
+  color: #6b7280;
+}
+

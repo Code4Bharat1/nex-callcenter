@@ -1,0 +1,526 @@
+.register-page {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* Left Panel - Register Form */
+.register-left-panel {
+  width: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px 40px 40px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.register-form-wrapper {
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 0;
+}
+
+/* Logo Section - Top Left */
+.register-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: auto;
+  padding-top: 20px;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.register-logo {
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+}
+
+.register-logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Form Container - Centered */
+.register-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  padding: 40px 0;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.register-subtitle {
+  font-size: 15px;
+  font-weight: 400;
+  color: #6b7280;
+  margin: 8px 0 0 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.register-title {
+  font-size: 36px;
+  font-weight: 600;
+  color: #1D1D1F;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.register-error-message {
+  background: #fee;
+  color: #c53030;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+  font-family: 'Manrope', sans-serif;
+}
+
+.register-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 400;
+  color: #1D1D1F;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  color: #1D1D1F;
+  letter-spacing: -0.01em;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  color: #1D1D1F;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231D1D1F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
+/* Password Input Wrapper */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding: 10px 45px 10px 12px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  color: #1D1D1F;
+  letter-spacing: -0.01em;
+}
+
+.password-input-wrapper input:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: #1a1a1a;
+}
+
+.password-toggle:focus {
+  outline: none;
+  color: #4B5CFF;
+}
+
+/* Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+  background: #1D1D1F;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2D2D2F;
+}
+
+.btn-primary:active:not(:disabled) {
+  background: #1D1D1F;
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.register-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 32px 0;
+  width: 100%;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.register-divider span {
+  padding: 0 16px;
+  color: #6b7280;
+  font-size: 14px;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Google Signup Button */
+.btn-google {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.btn-google:hover {
+  border-color: #4B5CFF;
+  background: #f8f9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 92, 255, 0.1);
+}
+
+.btn-google:active {
+  transform: translateY(0);
+}
+
+.btn-google svg {
+  flex-shrink: 0;
+}
+
+/* Footer Links */
+.register-footer {
+  text-align: center;
+  margin-top: 32px;
+  width: 100%;
+}
+
+.register-footer-text {
+  color: #6b7280;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+.register-footer-link {
+  color: #1D1D1F;
+  text-decoration: none;
+  font-weight: 400;
+  transition: opacity 0.2s ease;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 1px;
+}
+
+.register-footer-link:hover {
+  opacity: 0.7;
+  border-bottom-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Right Panel - Background Video with Text Overlay */
+.register-right-panel {
+  width: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  margin: 10px;
+  background-color: white;
+}
+
+/* Background Video */
+.register-background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px;
+  z-index: 0;
+}
+
+/* Dark Overlay */
+.register-background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+.register-image-overlay {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Top Left Content - Logo */
+.register-image-top-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  padding: 60px 40px 40px 40px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.register-image-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.register-image-logo-text {
+  font-size: 20px;
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+}
+
+.register-image-tagline {
+  font-size: 48px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.2;
+}
+
+/* Bottom Tagline */
+.register-image-bottom-tagline {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 0 40px;
+}
+
+/* Partners & Integrations Marquee */
+.register-partners-marquee-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin-top: 16px;
+}
+
+.register-partners-marquee-content {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  animation: register-partners-scroll 30s linear infinite;
+  white-space: nowrap;
+  width: max-content;
+}
+
+.register-partner-logo {
+  height: 32px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  object-position: center;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: opacity 0.3s ease;
+  display: block;
+}
+
+.register-partner-logo:hover {
+  opacity: 1;
+}
+
+@keyframes register-partners-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .register-page {
+    flex-direction: column;
+  }
+
+  .register-left-panel,
+  .register-right-panel {
+    width: 100%;
+    min-height: 50vh;
+  }
+
+  .register-right-panel {
+    min-height: 40vh;
+  }
+
+  .register-branding-text h2 {
+    font-size: 40px;
+  }
+
+  .register-branding-text p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .register-left-panel {
+    padding: 24px;
+  }
+
+  .register-form-container {
+    padding: 24px 0;
+  }
+
+  .register-title {
+    font-size: 28px;
+  }
+
+  .register-branding-text {
+    padding: 24px;
+  }
+
+  .register-branding-text h2 {
+    font-size: 32px;
+  }
+
+  .register-branding-text p {
+    font-size: 14px;
+  }
+}
+

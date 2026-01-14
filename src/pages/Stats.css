@@ -1,0 +1,566 @@
+/* Stats Page - Call Analytics */
+.stats-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Compact Header with Date Filter on Right */
+.stats-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 24px;
+}
+
+.stats-header-compact h1 {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+.stats-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stats-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Date Preset Buttons */
+.billing-date-presets {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.billing-preset-btn {
+  padding: 8px 16px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: white;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.billing-preset-btn:hover {
+  border-color: #4B5CFF;
+  color: #4B5CFF;
+  background: #F0F4FF;
+}
+
+.billing-preset-btn.active {
+  background: linear-gradient(135deg, #4B5CFF 0%, #6F7BFF 100%);
+  color: white;
+  border-color: #4B5CFF;
+  box-shadow: 0 2px 8px rgba(75, 92, 255, 0.25);
+}
+
+/* Date Range Inputs */
+.billing-date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 8px 12px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+}
+
+.billing-date-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.billing-date-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  white-space: nowrap;
+}
+
+.billing-date-input {
+  padding: 6px 10px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  background: white;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.billing-date-input:focus {
+  outline: none;
+  border-color: #4B5CFF;
+  box-shadow: 0 0 0 3px rgba(75, 92, 255, 0.1);
+}
+
+.billing-date-separator {
+  font-size: 13px;
+  font-weight: 500;
+  color: #9CA3AF;
+  padding: 0 4px;
+}
+
+.filter-date-compact {
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: white;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+}
+
+.filter-date-compact:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.refresh-btn-compact {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+  white-space: nowrap;
+}
+
+.refresh-btn-compact:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #5850ec 100%);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Metrics Grid - Dashboard Tile Style */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.metric-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+/* Charts Grid - Full Width, One Per Row */
+.charts-grid {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  border: 1.5px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.chart-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.chart-header h3 {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.3px;
+}
+
+.chart-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}
+
+/* Loading & Error States */
+.loading-message,
+.error-message {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  border: 1.5px solid #e5e7eb;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f4f6;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-message p {
+  margin: 0;
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.error-message {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.error-message p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Call History Section - Premium Design */
+.call-history-section {
+  margin-top: 32px;
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.call-history-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.call-history-title {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.2px;
+  line-height: 1.4;
+}
+
+.call-history-subtitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.no-calls-message {
+  padding: 60px 40px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.calls-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.calls-table-premium {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.calls-table-premium thead {
+  background: #fafbfc;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.calls-table-premium th {
+  padding: 12px 20px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  border-bottom: 1px solid #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+}
+
+.calls-table-premium tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.12s ease;
+}
+
+.calls-table-premium tbody tr:hover {
+  background-color: #fafbfc;
+}
+
+.calls-table-premium tbody tr:last-child {
+  border-bottom: none;
+}
+
+.calls-table-premium td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Column-specific styling for proper alignment */
+.col-order { width: 180px; }
+.col-customer { width: 160px; }
+.col-phone { width: 140px; }
+.col-duration { width: 100px; text-align: right; }
+.col-status { width: 100px; text-align: center; }
+.col-outcome { width: 140px; }
+.col-cost { width: 100px; text-align: right; }
+.col-source { width: 120px; }
+.col-time { width: 180px; }
+
+/* Cell content styling */
+.cell-order {
+  font-weight: 500;
+}
+
+.order-number-value {
+  color: #4f46e5;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  font-size: 13px;
+}
+
+.cell-customer {
+  font-weight: 500;
+}
+
+.customer-name-value {
+  color: #111827;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.cell-phone {
+  font-weight: 400;
+}
+
+.phone-value {
+  color: #374151;
+  font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+
+.cell-duration {
+  text-align: right;
+  font-weight: 400;
+}
+
+.duration-value {
+  color: #6b7280;
+  font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.cell-status {
+  text-align: center;
+}
+
+.status-badge-premium {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.cell-outcome {
+  font-weight: 400;
+}
+
+.outcome-value {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: lowercase;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.cell-cost {
+  text-align: right;
+  font-weight: 500;
+}
+
+.cost-value {
+  color: #111827;
+  font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.cell-source {
+  font-weight: 400;
+}
+
+.source-value {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 400;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.cell-time {
+  font-weight: 400;
+}
+
+.time-value {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-container {
+    padding: 20px;
+  }
+  
+  .stats-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-select,
+  .filter-date {
+    width: 100%;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-wrapper {
+    height: 250px;
+  }
+
+  .calls-table-container {
+    overflow-x: scroll;
+  }
+
+  .calls-table {
+    font-size: 12px;
+  }
+
+  .calls-table th,
+  .calls-table td {
+    padding: 10px 8px;
+  }
+}

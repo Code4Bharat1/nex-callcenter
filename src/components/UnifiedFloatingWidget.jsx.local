@@ -1,0 +1,148 @@
+import React, { useState, useEffect } from 'react';
+import FloatingTestCallButton from './FloatingTestCallButton';
+import HelpSupportWidget from './HelpSupportWidget';
+import './UnifiedFloatingWidget.css';
+
+const UnifiedFloatingWidget = ({ shop }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeWidget, setActiveWidget] = useState(null); // 'test' or 'support'
+  const [isVisible, setIsVisible] = useState(() => {
+    // Check localStorage for widget visibility
+    const saved = localStorage.getItem('floatingWidgetVisible');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  // Listen for localStorage changes from Settings
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('floatingWidgetVisible');
+      setIsVisible(saved !== null ? saved === 'true' : true);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen to custom event for same-tab updates
+    window.addEventListener('floatingWidgetVisibilityChanged', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('floatingWidgetVisibilityChanged', handleStorageChange);
+    };
+  }, []);
+
+  const handleToggle = () => {
+    if (activeWidget) {
+      // If a widget is open, close it
+      setActiveWidget(null);
+      setIsOpen(false);
+    } else {
+      // Toggle the menu
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const handleOptionClick = (option) => {
+    if (option === 'hide') {
+      // Hide the widget
+      localStorage.setItem('floatingWidgetVisible', 'false');
+      setIsVisible(false);
+      setIsOpen(false);
+      setActiveWidget(null);
+      // Dispatch custom event for same-tab updates
+      window.dispatchEvent(new Event('floatingWidgetVisibilityChanged'));
+    } else {
+      setActiveWidget(option);
+      // Keep cross icon visible when widget opens
+    }
+  };
+
+  const handleCloseWidget = () => {
+    setActiveWidget(null);
+    setIsOpen(false);
+  };
+
+  // Don't render if not visible
+  if (!isVisible) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Main Floating Button */}
+      <button
+        className={`unified-floating-btn ${isOpen || activeWidget ? 'active' : ''}`}
+        onClick={handleToggle}
+        title={isOpen || activeWidget ? 'Close' : 'Open Menu'}
+      >
+        {isOpen || activeWidget ? (
+          // Cross Icon
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        ) : (
+          // Plus Icon
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )}
+      </button>
+
+      {/* Options Menu */}
+      {isOpen && !activeWidget && (
+        <div className="unified-floating-options">
+          <button
+            className="unified-option-btn"
+            onClick={() => handleOptionClick('test')}
+          >
+            <div className="unified-option-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span>Test Script</span>
+          </button>
+          <button
+            className="unified-option-btn"
+            onClick={() => handleOptionClick('support')}
+          >
+            <div className="unified-option-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                <path d="M12 16V12M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <span>Support</span>
+          </button>
+          <button
+            className="unified-option-btn unified-option-btn-hide"
+            onClick={() => handleOptionClick('hide')}
+          >
+            <div className="unified-option-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 3L21 21M10.584 10.587C10.2087 10.9622 9.99778 11.4707 9.99756 12.0013C9.99734 12.5319 10.2078 13.0406 10.5828 13.416C10.9578 13.7915 11.4662 14.0024 11.9968 14.0027C12.5274 14.0029 13.0361 13.7924 13.4115 13.4174M17.86 17.86C16.1267 19.0687 14.089 19.7225 12 19.74C5.82 19.74 2.06 12.28 2.06 12.28C3.26935 10.0087 4.98556 8.05064 7.07 6.55L17.86 17.86ZM9.89 5.13C10.5853 4.95893 11.2917 4.87097 12 4.87C18.18 4.87 21.94 12.33 21.94 12.33C21.351 13.3793 20.6366 14.3508 19.81 15.22L9.89 5.13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span>Hide Widget</span>
+          </button>
+        </div>
+      )}
+
+      {/* Test Script Widget */}
+      {activeWidget === 'test' && (
+        <div className="unified-widget-wrapper">
+          <FloatingTestCallButton shop={shop} isEmbedded onClose={handleCloseWidget} />
+        </div>
+      )}
+
+      {/* Support Widget */}
+      {activeWidget === 'support' && (
+        <div className="unified-widget-wrapper">
+          <HelpSupportWidget isEmbedded onClose={handleCloseWidget} />
+        </div>
+      )}
+    </>
+  );
+};
+
+export default UnifiedFloatingWidget;

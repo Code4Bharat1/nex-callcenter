@@ -1,0 +1,321 @@
+/* Hide original widget buttons when using unified widget - but keep in DOM for clicking */
+.hidden-widget-buttons {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.hidden-widget-buttons .floating-test-call-btn,
+.hidden-widget-buttons .help-support-widget-btn {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: auto !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Make sure modals from hidden buttons are visible and clickable */
+.hidden-widget-buttons .floating-test-call-modal,
+.hidden-widget-buttons .help-support-window-v2 {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  z-index: 10000 !important;
+}
+
+/* Unified Floating Widget Container */
+.unified-floating-widget {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+/* Main Plus Button */
+.unified-widget-main-btn {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #000000;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 3;
+  backdrop-filter: blur(10px);
+}
+
+.unified-widget-main-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.unified-widget-main-btn:active {
+  transform: scale(0.95);
+}
+
+/* Plus Icon */
+.unified-widget-plus-icon {
+  transition: transform 0.3s ease;
+}
+
+/* Rotate icon only when clicked (not on hover) */
+.unified-widget-main-btn.rotated .unified-widget-plus-icon {
+  transform: rotate(45deg);
+}
+
+/* Close/Dismiss Button - 50% overlapping top-right corner */
+.unified-widget-close-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1f2937;
+  border: 2px solid white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  z-index: 4;
+  animation: closeBtnAppear 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.unified-widget-close-btn:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+.unified-widget-close-btn:active {
+  transform: scale(0.9);
+}
+
+@keyframes closeBtnAppear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Action Buttons (Test and Support) */
+.unified-widget-action-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0) translateY(20px);
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+}
+
+.unified-widget-action-btn.unified-widget-btn-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+/* Test Button - appears above main button - Original Design with Rotating Border */
+.unified-widget-test-btn {
+  background: #FFFFFF;
+  animation: slideInFromBottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.unified-widget-test-btn::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #4B5CFF, #E91E63, #00BCD4, #4B5CFF);
+  z-index: -1;
+  animation: rotateBorder 3s linear infinite;
+  opacity: 0.6;
+}
+
+.unified-widget-test-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: #FFFFFF;
+  z-index: -1;
+}
+
+.unified-widget-test-btn.unified-widget-btn-visible {
+  animation-delay: 0.05s;
+}
+
+/* Support Button - appears to the left of main button - Original Design */
+.unified-widget-support-btn {
+  background: #3047EC;
+  position: absolute;
+  bottom: 4px;
+  right: 84px;
+  animation: slideInFromRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  box-shadow: 0 2px 32px 0 rgba(0, 0, 0, 0.16), 0 1px 6px 0 rgba(0, 0, 0, 0.06);
+}
+
+.unified-widget-support-btn.unified-widget-btn-visible {
+  animation-delay: 0.1s;
+}
+
+/* Action Button Hover Effects */
+.unified-widget-action-btn:hover {
+  transform: scale(1.1) translateY(0);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.unified-widget-action-btn:active {
+  transform: scale(0.95) translateY(0);
+}
+
+/* Sound Wave Animation for Test Button */
+.unified-widget-test-btn .floating-test-call-sound-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+}
+
+.unified-widget-test-btn .floating-test-call-sound-bar {
+  width: 3px;
+  background: linear-gradient(to bottom, #E91E63, #00BCD4);
+  border-radius: 3px;
+  animation: floatingSoundWave 1.5s ease-in-out infinite;
+}
+
+.unified-widget-test-btn .floating-test-call-sound-bar:nth-child(1) {
+  height: 12px;
+  animation-delay: 0s;
+}
+
+.unified-widget-test-btn .floating-test-call-sound-bar:nth-child(2) {
+  height: 18px;
+  animation-delay: 0.2s;
+}
+
+.unified-widget-test-btn .floating-test-call-sound-bar:nth-child(3) {
+  height: 24px;
+  animation-delay: 0.4s;
+}
+
+.unified-widget-test-btn .floating-test-call-sound-bar:nth-child(4) {
+  height: 18px;
+  animation-delay: 0.6s;
+}
+
+.unified-widget-test-btn .floating-test-call-sound-bar:nth-child(5) {
+  height: 12px;
+  animation-delay: 0.8s;
+}
+
+@keyframes floatingSoundWave {
+  0%, 100% {
+    transform: scaleY(0.5);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animations */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .unified-floating-widget {
+    bottom: 24px;
+    right: 24px;
+    gap: 12px;
+  }
+
+  .unified-widget-main-btn {
+    width: 56px;
+    height: 56px;
+  }
+
+  .unified-widget-action-btn {
+    width: 56px;
+    height: 56px;
+  }
+
+  .unified-widget-close-btn {
+    width: 20px;
+    height: 20px;
+  }
+
+  .unified-widget-support-btn {
+    right: 72px;
+  }
+}
+

@@ -1,0 +1,97 @@
+.tutorial-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.4);
+  z-index: 2147483646;
+  pointer-events: none;
+}
+
+.tutorial-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.tutorial-card-container {
+  position: fixed;
+  z-index: 2147483647;
+  width: 400px;
+  max-width: calc(100vw - 32px);
+}
+
+.tutorial-content {
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid #111827;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 24px;
+  width: 100%;
+  position: relative;
+}
+
+.tutorial-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+  padding-right: 80px;
+}
+
+.tutorial-description {
+  font-size: 14px;
+  color: #000000;
+  margin: 0 0 48px 0;
+  line-height: 1.6;
+}
+
+.tutorial-buttons {
+  display: flex;
+  gap: 12px;
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+}
+
+.tutorial-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tutorial-btn-primary {
+  background: #FFFFFF;
+  color: #111827;
+  border: 1px solid #111827;
+}
+
+.tutorial-btn-primary:hover {
+  background: #111827;
+  color: #FFFFFF;
+}
+
+.tutorial-skip-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  background: #FFFFFF;
+  color: #111827;
+  border: 1px solid #111827;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tutorial-skip-btn:hover {
+  background: #111827;
+  color: #FFFFFF;
+}

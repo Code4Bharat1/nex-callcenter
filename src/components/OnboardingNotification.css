@@ -1,0 +1,181 @@
+.onboarding-notification-wrapper {
+  position: relative;
+}
+
+.onboarding-notification-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.onboarding-notification-button:hover {
+  background: #F3F4F6;
+}
+
+.onboarding-notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #EF4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid white;
+}
+
+.onboarding-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.onboarding-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.onboarding-popup-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.onboarding-popup-progress {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.onboarding-popup-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6B7280;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.onboarding-popup-close:hover {
+  background: #F3F4F6;
+}
+
+.onboarding-popup-progress-bar {
+  height: 4px;
+  background: #E5E7EB;
+  overflow: hidden;
+}
+
+.onboarding-popup-progress-fill {
+  height: 100%;
+  background: #4B5CFF;
+  transition: width 0.3s ease;
+}
+
+.onboarding-popup-steps {
+  padding: 8px 0;
+}
+
+.onboarding-popup-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.onboarding-popup-step:hover {
+  background: #F9FAFB;
+}
+
+.onboarding-popup-step.complete {
+  opacity: 0.7;
+}
+
+.onboarding-popup-step-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-icon-complete {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-icon-pending {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #D1D5DB;
+  background: white;
+}
+
+.onboarding-popup-step-title {
+  flex: 1;
+  font-size: 14px;
+  color: #111827;
+  font-weight: 400;
+}
+
+.onboarding-popup-step-arrow {
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.onboarding-popup-divider {
+  height: 1px;
+  background: #E5E7EB;
+  margin: 0 20px;
+}
+

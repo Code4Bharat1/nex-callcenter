@@ -1,0 +1,3595 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { api } from '../utils/api';
+import './Dashboard2.css';
+
+// TimeWindowBar Component
+const TimeWindowBar = ({ startTime = "09:00", endTime = "20:00" }) => {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const istNow = new Date(now.getTime() + istOffset);
+  const currentTime = istNow.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  
+  console.log('🕐 TimeWindowBar - Current IST time:', currentTime);
+  console.log('🕐 TimeWindowBar - Window:', { startTime, endTime });
+  
+  const timeToMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = timeToMinutes(endTime);
+  const startPercent = (startMinutes / 1440) * 100;
+  const endPercent = (endMinutes / 1440) * 100;
+  const width = endPercent - startPercent;
+  
+  // Current time for red line marker
+  const currentMoment = new Date();
+  const istOffsetMs = 5.5 * 60 * 60 * 1000;
+  const currentIST = new Date(currentMoment.getTime() + istOffsetMs);
+  const currentMinutes = currentIST.getHours() * 60 + currentIST.getMinutes();
+  const currentPercent = (currentMinutes / 1440) * 100;
+  
+  const formatTime = (time) => {
+    const [hours, minutes] = time.split(':');
+    const h = parseInt(hours);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const displayHour = h % 12 || 12;
+    const formatted = `${displayHour}:${minutes} ${ampm}`;
+    console.log('🕐 formatTime:', { input: time, output: formatted, h, ampm, displayHour });
+    return formatted;
+  };
+
+  const stars = [
+    { left: '5%', top: '20%', size: 2 },
+    { left: '8%', top: '60%', size: 1.5 },
+    { left: '12%', top: '35%', size: 1 },
+    { left: '15%', top: '70%', size: 2 },
+    { left: '3%', top: '50%', size: 1.5 },
+    { left: '10%', top: '15%', size: 1 },
+    { left: '85%', top: '25%', size: 2 },
+    { left: '88%', top: '65%', size: 1.5 },
+    { left: '92%', top: '40%', size: 1 },
+    { left: '95%', top: '55%', size: 2 },
+    { left: '90%', top: '80%', size: 1.5 },
+    { left: '97%', top: '30%', size: 1 },
+  ];
+
+   return (
+    <div style={{ width: '100%', marginTop: '4px' }}>
+      <div style={{ position: 'relative', marginTop: '8px', height: '20px' }}>
+        <div 
+          style={{
+            position: 'absolute',
+            top: 0,
+            height: '100%',
+            width: '1px',
+            background: 'white',
+            boxShadow: '0 0 8px rgba(255, 255, 255, 0.5)',
+            left: `${startPercent}%`
+          }}
+        />
+        <div 
+          style={{
+            position: 'absolute',
+            top: 0,
+            height: '100%',
+            width: '1px',
+            background: 'white',
+            boxShadow: '0 0 8px rgba(255, 255, 255, 0.5)',
+            left: `${endPercent}%`
+          }}
+        />
+        
+        {/* Current time marker - Red line */}
+        <div 
+          style={{
+            position: 'absolute',
+            top: 0,
+            height: '100%',
+            width: '2px',
+            background: '#EF4444',
+            boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
+            left: `${currentPercent}%`,
+            zIndex: 10
+          }}
+        />
+        
+        {/* Current time marker - Red line */}
+        <div 
+          style={{
+            position: 'absolute',
+            top: 0,
+            height: '100%',
+            width: '2px',
+            background: '#EF4444',
+            boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
+            left: `${currentPercent}%`,
+            zIndex: 10
+          }}
+        />
+        ))}
+        
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: '-12px' }}>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', filter: 'blur(4px)', background: 'rgba(250, 204, 21, 0.6)', width: '24px', height: '24px', top: '-2px', left: '-2px' }} />
+          <div style={{ width: '20px', height: '20px', background: '#FACC15', borderRadius: '50%', boxShadow: '0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(251, 191, 36, 0.4)' }} />
+        </div>
+        
+        <div style={{ position: 'absolute', top: 0, height: '100%', left: `${startPercent}%`, width: `${width}%`, background: 'rgba(255, 255, 255, 0.1)', borderLeft: '1px solid rgba(255, 255, 255, 0.2)', borderRight: '1px solid rgba(255, 255, 255, 0.2)' }} />
+
+        <div style={{ position: 'absolute', top: 0, height: '100%', width: '1px', background: 'white', boxShadow: '0 0 8px rgba(255, 255, 255, 0.5)', left: `${startPercent}%` }} />
+        <div style={{ position: 'absolute', top: 0, height: '100%', width: '1px', background: 'white', boxShadow: '0 0 8px rgba(255, 255, 255, 0.5)', left: `${endPercent}%` }} />
+      </div>
+{/* 
+      <div style={{ position: 'relative', marginTop: '8px', height: '20px' }}>
+        <div style={{ position: 'absolute', fontSize: '14px', fontWeight: 600, color: '#374151', left: `${startPercent}%`, transform: 'translateX(+50%)' }}>{formatTime(startTime)}</div>
+        <div style={{ position: 'absolute', fontSize: '14px', fontWeight: 600, color: '#374151', left: `${endPercent}%`, transform: 'translateX(+50%)' }}>{formatTime(endTime)}</div>
+      </div> */}
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// Memoji files array
+const MEMOJI_FILES = [
+  '/images/1 Happy.svg',
+  '/images/2 Happy.svg',
+  '/images/3 happy.svg',
+  '/images/4 happy.svg',
+  '/images/6 happy.svg',
+  '/images/Character=Angela, Skin tone=White, Posture=1 Happy.svg',
+  '/images/Character=Darlene, Skin tone=White, Posture=1 Happy.svg',
+  '/images/Character=Jeniffer, Skin tone=White, Posture=1 Happy.svg',
+  '/images/Character=Kim, Skin tone=White, Posture=1 Happy.svg',
+];
+
+// Light background colors for memojis
+const MEMOJI_BACKGROUNDS = [
+  '#F9FFF1', '#FFF9F0', '#F0F9FF', '#F9F0FF', '#FFF0F9',
+  '#F0FFF9', '#FFF5F0', '#F5F0FF', '#F0F5FF', '#FFF0F5',
+];
+
+// Get memoji and background for an agent (consistent based on agent ID)
+const getAgentMemoji = (agentId) => {
+  const index = agentId ? (parseInt(agentId) % MEMOJI_FILES.length) : 0;
+  const bgIndex = agentId ? (parseInt(agentId) % MEMOJI_BACKGROUNDS.length) : 0;
+  return {
+    memoji: MEMOJI_FILES[index],
+    background: MEMOJI_BACKGROUNDS[bgIndex],
+  };
+};
+
+// Mini Graph Component for RTO Bucket Boxes
+const MiniGraph = ({ data = [], isActive = false, animate = false }) => {
+  const width = 80;
+  const height = 35;
+  const padding = { top: 4, right: 4, bottom: 4, left: 4 };
+  const graphWidth = width - padding.left - padding.right;
+  const graphHeight = height - padding.top - padding.bottom;
+  const [animationProgress, setAnimationProgress] = useState(0);
+  
+  // Use provided data or show empty
+  if (!data || data.length === 0) {
+    return (
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+        <text x={width/2} y={height/2} textAnchor="middle" fontSize="10" fill="#9CA3AF">No data</text>
+      </svg>
+    );
+  }
+  
+  const currentData = data;
+  const previousData = currentData.map(v => v * 0.85); // Previous period (85% of current)
+  
+  const maxValue = Math.max(...currentData, ...previousData, 100);
+  const minValue = Math.min(...currentData, ...previousData, 0);
+  const valueRange = maxValue - minValue || 1;
+  
+  const currentPoints = currentData.map((value, i) => {
+    const x = padding.left + (i / (currentData.length - 1)) * graphWidth;
+    const y = padding.top + graphHeight - ((value - minValue) / valueRange) * graphHeight;
+    return { x, y };
+  });
+  
+  const previousPoints = previousData.map((value, i) => {
+    const x = padding.left + (i / (previousData.length - 1)) * graphWidth;
+    const y = padding.top + graphHeight - ((value - minValue) / valueRange) * graphHeight;
+    return { x, y };
+  });
+  
+  const createPath = (points, progress = 1) => {
+    if (points.length < 2) return '';
+    const visiblePoints = Math.ceil(points.length * progress);
+    if (visiblePoints < 2) return '';
+    
+    let path = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < visiblePoints; i++) {
+      path += ` L ${points[i].x} ${points[i].y}`;
+    }
+    // If partial progress, add the last point interpolated
+    if (visiblePoints < points.length && progress < 1) {
+      const lastIndex = visiblePoints - 1;
+      const nextIndex = visiblePoints;
+      const t = (progress * points.length) - lastIndex;
+      const x = points[lastIndex].x + (points[nextIndex].x - points[lastIndex].x) * t;
+      const y = points[lastIndex].y + (points[nextIndex].y - points[lastIndex].y) * t;
+      path += ` L ${x} ${y}`;
+    }
+    return path;
+  };
+  
+  // Animation effect
+  useEffect(() => {
+    if (animate) {
+      setAnimationProgress(0);
+      const duration = 1000; // 1 second
+      const startTime = Date.now();
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        setAnimationProgress(progress);
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      requestAnimationFrame(animate);
+    } else {
+      setAnimationProgress(1);
+    }
+  }, [animate]);
+  
+  const currentPath = createPath(currentPoints, animationProgress);
+  const previousPath = createPath(previousPoints, animationProgress);
+  
+  const lineColor = isActive ? '#B7FA7B' : '#3B82F6';
+  const dashedColor = isActive ? 'rgba(183, 250, 123, 0.4)' : 'rgba(59, 130, 246, 0.4)';
+  
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+      {/* Dashed previous line */}
+      <path 
+        d={previousPath} 
+        fill="none" 
+        stroke={dashedColor} 
+        strokeWidth="1.5" 
+        strokeDasharray="3 3"
+      />
+      {/* Solid current line */}
+      <path 
+        d={currentPath} 
+        fill="none" 
+        stroke={lineColor} 
+        strokeWidth="2"
+      />
+    </svg>
+  );
+};
+
+// Graph Components
+const PickupRatesGraph = ({ data, filterType = 'days' }) => {
+  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const svgRef = useRef(null);
+  
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', color: '#EF4444' }}>
+        No data available
+      </div>
+    );
+  }
+  
+  const width = 400;
+  const height = 200;
+  const padding = { top: 20, right: 20, bottom: 40, left: 40 };
+  const graphWidth = width - padding.left - padding.right;
+  const graphHeight = height - padding.top - padding.bottom;
+  
+  const maxValue = Math.max(...data.map(d => d.value), 100);
+  const minValue = Math.min(...data.map(d => d.value), 0);
+  const valueRange = maxValue - minValue || 1;
+  
+  const points = data.map((item, i) => {
+    const x = padding.left + (i / (data.length - 1)) * graphWidth;
+    const y = padding.top + graphHeight - ((item.value - minValue) / valueRange) * graphHeight;
+    return { x, y, ...item };
+  });
+  
+  // Create smooth path using quadratic curves
+  const createSmoothPath = (points) => {
+    if (points.length < 2) return '';
+    let path = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const cp1x = points[i].x + (points[i + 1].x - points[i].x) / 2;
+      const cp1y = points[i].y;
+      const cp2x = cp1x;
+      const cp2y = points[i + 1].y;
+      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${points[i + 1].x} ${points[i + 1].y}`;
+    }
+    return path;
+  };
+  
+  const linePath = createSmoothPath(points);
+  const areaPath = linePath + ` L ${points[points.length - 1].x} ${padding.top + graphHeight} L ${points[0].x} ${padding.top + graphHeight} Z`;
+  
+  const handleMouseMove = (e) => {
+    if (!svgRef.current) return;
+    const rect = svgRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    
+    // Convert mouse position to SVG viewBox coordinates
+    const scaleX = width / rect.width;
+    const svgX = mouseX * scaleX;
+    
+    // Find closest point
+    let closest = points[0];
+    let minDist = Math.abs(points[0].x - svgX);
+    points.forEach(point => {
+      const dist = Math.abs(point.x - svgX);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = point;
+      }
+    });
+    
+    setHoveredPoint(closest);
+  };
+  
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <svg
+        ref={svgRef}
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setHoveredPoint(null)}
+        style={{ cursor: 'crosshair' }}
+      >
+        <defs>
+          <linearGradient id="pickupGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        
+        {/* Area fill */}
+        <path d={areaPath} fill="url(#pickupGradient)" />
+        
+        {/* Line */}
+        <path d={linePath} fill="none" stroke="#3B82F6" strokeWidth="2" />
+        
+        {/* Data points */}
+        {points.map((point, i) => (
+          <circle
+            key={i}
+            cx={point.x}
+            cy={point.y}
+            r={hoveredPoint === point ? 5 : 3}
+            fill="#3B82F6"
+            style={{ transition: 'r 0.2s' }}
+          />
+        ))}
+        
+        {/* X-axis labels - show only every few hours for hours view */}
+        {points.map((point, i) => {
+          // For hours: show 12am, 4am, 8am, 12pm, 4pm, 8pm
+          // For days: show all
+          const shouldShow = filterType === 'days' 
+            ? true 
+            : (point.label === '12am' || point.label === '4am' || point.label === '8am' || 
+               point.label === '12pm' || point.label === '4pm' || point.label === '8pm');
+          
+          if (!shouldShow) return null;
+          
+          return (
+          <text
+            key={i}
+            x={point.x}
+            y={height - padding.bottom + 15}
+            textAnchor="middle"
+            fontSize="10"
+            fill="#6B7280"
+            fontFamily="Manrope, sans-serif"
+          >
+            {point.label}
+          </text>
+          );
+        })}
+        
+        {/* Y-axis labels */}
+        {[0, 25, 50, 75, 100].map(value => {
+          const y = padding.top + graphHeight - ((value - minValue) / valueRange) * graphHeight;
+          return (
+            <text
+              key={value}
+              x={padding.left - 10}
+              y={y + 4}
+              textAnchor="end"
+              fontSize="10"
+              fill="#6B7280"
+              fontFamily="Manrope, sans-serif"
+            >
+              {value}%
+            </text>
+          );
+        })}
+        
+        {/* Hover line */}
+        {hoveredPoint && (
+          <line
+            x1={hoveredPoint.x}
+            y1={padding.top}
+            x2={hoveredPoint.x}
+            y2={padding.top + graphHeight}
+            stroke="#9CA3AF"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+            opacity="0.5"
+          />
+        )}
+      </svg>
+      
+      {/* Tooltip */}
+      {hoveredPoint && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${(hoveredPoint.x / width) * 100}%`,
+            top: `${(hoveredPoint.y / height) * 100}%`,
+            transform: 'translate(-50%, -100%)',
+            marginTop: '-8px',
+            padding: '6px 10px',
+            background: '#1f2937',
+            color: '#ffffff',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontFamily: 'Manrope, sans-serif',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            zIndex: 10
+          }}
+        >
+          {hoveredPoint.label}: {hoveredPoint.value.toFixed(1)}%
+        </div>
+      )}
+    </div>
+  );
+};
+
+const DropoffRatesGraph = ({ data }) => {
+  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const svgRef = useRef(null);
+  
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', color: '#EF4444' }}>
+        No data available
+      </div>
+    );
+  }
+  
+  const width = 400;
+  const height = 200;
+  const padding = { top: 20, right: 20, bottom: 40, left: 40 };
+  const graphWidth = width - padding.left - padding.right;
+  const graphHeight = height - padding.top - padding.bottom;
+  
+  const maxValue = 100;
+  const minValue = 0;
+  const valueRange = maxValue - minValue;
+  
+  const points = data.map((item, i) => {
+    const x = padding.left + (i / (data.length - 1)) * graphWidth;
+    const y = padding.top + graphHeight - ((item.value - minValue) / valueRange) * graphHeight;
+    return { x, y, ...item };
+  });
+  
+  // Create smooth path
+  const createSmoothPath = (points) => {
+    if (points.length < 2) return '';
+    let path = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const cp1x = points[i].x + (points[i + 1].x - points[i].x) / 2;
+      const cp1y = points[i].y;
+      const cp2x = cp1x;
+      const cp2y = points[i + 1].y;
+      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${points[i + 1].x} ${points[i + 1].y}`;
+    }
+    return path;
+  };
+  
+  const linePath = createSmoothPath(points);
+  const areaPath = linePath + ` L ${points[points.length - 1].x} ${padding.top + graphHeight} L ${points[0].x} ${padding.top + graphHeight} Z`;
+  
+  const handleMouseMove = (e) => {
+    if (!svgRef.current) return;
+    const rect = svgRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    
+    // Convert mouse position to SVG viewBox coordinates
+    const scaleX = width / rect.width;
+    const svgX = mouseX * scaleX;
+    
+    let closest = points[0];
+    let minDist = Math.abs(points[0].x - svgX);
+    points.forEach(point => {
+      const dist = Math.abs(point.x - svgX);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = point;
+      }
+    });
+    
+    setHoveredPoint(closest);
+  };
+  
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <svg
+        ref={svgRef}
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="xMidYMid meet"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setHoveredPoint(null)}
+        style={{ cursor: 'crosshair' }}
+      >
+        <defs>
+          <linearGradient id="dropoffGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#FB923C" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        
+        {/* Area fill */}
+        <path d={areaPath} fill="url(#dropoffGradient)" />
+        
+        {/* Line */}
+        <path d={linePath} fill="none" stroke="#FB923C" strokeWidth="2" />
+        
+        {/* Data points */}
+        {points.map((point, i) => (
+          <circle
+            key={i}
+            cx={point.x}
+            cy={point.y}
+            r={hoveredPoint === point ? 5 : 3}
+            fill="#FB923C"
+            style={{ transition: 'r 0.2s' }}
+          />
+        ))}
+        
+        {/* X-axis labels - show only every few hours */}
+        {points.map((point, i) => {
+          // Show 12am, 4am, 8am, 12pm, 4pm, 8pm, 10pm
+          const shouldShow = point.label === '12am' || point.label === '4am' || point.label === '8am' || 
+                            point.label === '12pm' || point.label === '4pm' || point.label === '8pm' || point.label === '10pm';
+          
+          if (!shouldShow) return null;
+          
+          return (
+          <text
+            key={i}
+            x={point.x}
+            y={height - padding.bottom + 15}
+            textAnchor="middle"
+            fontSize="10"
+            fill="#6B7280"
+            fontFamily="Manrope, sans-serif"
+          >
+            {point.label}
+          </text>
+          );
+        })}
+        
+        {/* Y-axis labels */}
+        {[0, 25, 50, 75, 100].map(value => {
+          const y = padding.top + graphHeight - ((value - minValue) / valueRange) * graphHeight;
+          return (
+            <text
+              key={value}
+              x={padding.left - 10}
+              y={y + 4}
+              textAnchor="end"
+              fontSize="10"
+              fill="#6B7280"
+              fontFamily="Manrope, sans-serif"
+            >
+              {value}%
+            </text>
+          );
+        })}
+        
+        {/* Hover line */}
+        {hoveredPoint && (
+          <line
+            x1={hoveredPoint.x}
+            y1={padding.top}
+            x2={hoveredPoint.x}
+            y2={padding.top + graphHeight}
+            stroke="#9CA3AF"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+            opacity="0.5"
+          />
+        )}
+      </svg>
+      
+      {/* Tooltip */}
+      {hoveredPoint && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${(hoveredPoint.x / width) * 100}%`,
+            top: `${(hoveredPoint.y / height) * 100}%`,
+            transform: 'translate(-50%, -100%)',
+            marginTop: '-8px',
+            padding: '6px 10px',
+            background: '#1f2937',
+            color: '#ffffff',
+            borderRadius: '4px',
+            fontSize: '12px',
+            fontFamily: 'Manrope, sans-serif',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            zIndex: 10
+          }}
+        >
+          {hoveredPoint.label}: {hoveredPoint.value.toFixed(1)}%
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Dashboard2 = ({ shop: shopProp }) => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const shop = shopProp || searchParams.get('shop');
+  
+  // Function to trigger test call modal
+  const handleTestCallClick = () => {
+    // Find and click the floating test call button
+    const floatingButton = document.querySelector('.floating-test-call-btn');
+    if (floatingButton) {
+      floatingButton.click();
+    }
+  };
+  
+  // Date filter state
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  
+  // New RTO bucket data
+  const [newRtoOrders, setNewRtoOrders] = useState([]);
+  const [rtoStats, setRtoStats] = useState({}); // Original stats (always unfiltered)
+  const [activeStatCard, setActiveStatCard] = useState(null); // Currently selected stat card reason
+  const [selectedOrders, setSelectedOrders] = useState(new Set()); // Selected order IDs
+  const [selectAll, setSelectAll] = useState(false);
+  const [rtoTabEntered, setRtoTabEntered] = useState(false); // Track when RTO Bucket tab is entered for graph animation
+  const [rtoOrdersPagination, setRtoOrdersPagination] = useState({
+    totalCount: 0,
+    totalPages: 0,
+    currentPage: 1,
+    hasNext: false,
+    hasPrev: false,
+    limit: 100
+  });
+  
+  // Sorting state for RTO Bucket table
+  const [sortColumn, setSortColumn] = useState('order');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [openActionMenu, setOpenActionMenu] = useState(null);
+  const [hoveredReason, setHoveredReason] = useState(null);
+  const [reasonTooltipPosition, setReasonTooltipPosition] = useState({ top: 0, left: 0 });
+  
+  // Sticky header state
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const [stickyHeaderLeft, setStickyHeaderLeft] = useState(0);
+  const [stickyHeaderWidth, setStickyHeaderWidth] = useState('100%');
+  const tableHeaderRef = useRef(null);
+  const tableContainerRef = useRef(null);
+  
+  // Standard orders data
+  const [standardOrders, setStandardOrders] = useState([]);
+  const [standardOrdersPagination, setStandardOrdersPagination] = useState({
+    totalCount: 0,
+    totalPages: 0,
+    currentPage: 1,
+    hasNext: false,
+    hasPrev: false
+  });
+  const [selectedStandardOrders, setSelectedStandardOrders] = useState(new Set()); // Selected standard order IDs
+  const [selectAllStandard, setSelectAllStandard] = useState(false);
+  
+  // Clip creation state
+  const [showCreateClipModal, setShowCreateClipModal] = useState(false);
+  const [clipName, setClipName] = useState('');
+  const [clipDescription, setClipDescription] = useState('');
+  const [creatingClip, setCreatingClip] = useState(false);
+
+  // Payment success modal state
+  const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false);
+  const [paymentSuccessAmount, setPaymentSuccessAmount] = useState(0);
+  const [paymentAnimationData, setPaymentAnimationData] = useState(null);
+
+  // Load animation data when modal opens
+  useEffect(() => {
+    if (showPaymentSuccessModal && !paymentAnimationData) {
+      fetch('/images/successful_payment.json')
+        .then(res => res.json())
+        .then(data => {
+          console.log('[PaymentModal] Animation data loaded');
+          setPaymentAnimationData(data);
+        })
+        .catch(err => console.error('[PaymentModal] Failed to load:', err));
+    }
+  }, [showPaymentSuccessModal, paymentAnimationData]);
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState('stats');
+  const [showCreateDropdown, setShowCreateDropdown] = useState(false);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const createDropdownRef = useRef(null);
+  const filterDropdownRef = useRef(null);
+  
+  // Sticky bar state - always visible
+  const stickyCreateDropdownRef = useRef(null);
+  const stickyFilterDropdownRef = useRef(null);
+  
+  // Pickup Rates filter state
+  const [pickupRatesFilter, setPickupRatesFilter] = useState('days');
+  const [showPickupFilterDropdown, setShowPickupFilterDropdown] = useState(false);
+  const pickupFilterRef = useRef(null);
+  
+  // Dashboard stats tab data (loaded from API)
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [loadingDashboardStats, setLoadingDashboardStats] = useState(false);
+  const defaultCardMetrics = {
+    pendingOrders: 0,
+    ndrCount: 0,
+    codOrdersToday: 0,
+    queuedCallsToday: 0,
+    todaysOutcomes: { total: 0, outcomes: {} },
+    todaysSuccessCriteriaCalls: 0,
+    ndrConnected: false
+  };
+  const [cardMetrics, setCardMetrics] = useState(defaultCardMetrics);
+  const [loadingCardMetrics, setLoadingCardMetrics] = useState(false);
+  
+  // Clippings data
+  const [clippings, setClippings] = useState([]);
+  const [loadingClippings, setLoadingClippings] = useState(false);
+  
+  // Loading and error states
+  const [loading, setLoading] = useState(true);
+  const [loadingRto, setLoadingRto] = useState(false);
+  const [loadingStandard, setLoadingStandard] = useState(false);
+  const [error, setError] = useState(null);
+  const [isTestShop, setIsTestShop] = useState(false);
+  
+  const normalizeMetricValue = (value) => Number(value || 0);
+  const pendingOrdersCount = normalizeMetricValue(cardMetrics.pendingOrders);
+  const ndrCount = normalizeMetricValue(cardMetrics.ndrCount);
+  const codOrdersCount = normalizeMetricValue(cardMetrics.codOrdersToday);
+  const queuedCallsCount = normalizeMetricValue(cardMetrics.queuedCallsToday);
+
+  const formatDisplayDate = (value) => {
+    if (!value) return null;
+    const dateObj = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(dateObj.getTime())) return null;
+    return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const metricsDateLabel = (() => {
+    if (fromDate && toDate) {
+      if (fromDate === toDate) {
+        return formatDisplayDate(fromDate);
+      }
+      const startLabel = formatDisplayDate(fromDate);
+      const endLabel = formatDisplayDate(toDate);
+      if (startLabel && endLabel) {
+        return `${startLabel} - ${endLabel}`;
+      }
+      return startLabel || endLabel;
+    }
+    if (fromDate) return formatDisplayDate(fromDate);
+    if (toDate) return formatDisplayDate(toDate);
+    return formatDisplayDate(new Date());
+  })();
+
+  // Agents state
+  const [agents, setAgents] = useState([]);
+  const [loadingAgents, setLoadingAgents] = useState(false);
+
+  // RTO Stats for bar chart - will be populated from rtoStats
+
+  // Load dashboard stats tab data
+  const loadDashboardStats = async () => {
+    if (!shop) return;
+    
+    setLoadingDashboardStats(true);
+    try {
+      const response = await fetch(`/api/dashboard-stats-tab?shop=${encodeURIComponent(shop)}`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        setDashboardStats(data.data);
+        console.log('[Dashboard2] Dashboard stats loaded:', data.data);
+      } else {
+        console.error('[Dashboard2] Failed to load dashboard stats:', data.error);
+        setDashboardStats(null);
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading dashboard stats:', err);
+      setDashboardStats(null);
+    } finally {
+      setLoadingDashboardStats(false);
+    }
+  };
+
+  const loadDashboardCardMetrics = async () => {
+    if (!shop) return;
+
+    setLoadingCardMetrics(true);
+    try {
+      const params = new URLSearchParams({ shop });
+      if (fromDate) params.append('fromDate', fromDate);
+      if (toDate) params.append('toDate', toDate);
+
+      const response = await fetch(`/api/dashboard-card-metrics?${params.toString()}`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+
+      console.log('[Dashboard2] Dashboard card metrics response:', data);
+
+      if (data.success && data.data) {
+        console.log('[Dashboard2] Setting card metrics:', data.data);
+        setCardMetrics(data.data);
+      } else {
+        console.warn('[Dashboard2] Failed to load card metrics, using defaults. Response:', data);
+        setCardMetrics(defaultCardMetrics);
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading dashboard card metrics:', err);
+      setCardMetrics(defaultCardMetrics);
+    } finally {
+      setLoadingCardMetrics(false);
+    }
+  };
+
+  // Load clippings
+  const loadClippings = async () => {
+    if (!shop) return;
+    
+    setLoadingClippings(true);
+    try {
+      const response = await fetch(`/api/clips?shop=${encodeURIComponent(shop)}&limit=10`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.clips)) {
+        setClippings(data.clips);
+        console.log('[Dashboard2] Clippings loaded:', data.clips.length);
+      } else {
+        console.error('[Dashboard2] Failed to load clippings:', data.error);
+        setClippings([]);
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading clippings:', err);
+      setClippings([]);
+    } finally {
+      setLoadingClippings(false);
+    }
+  };
+
+  // Load stats separately (always unfiltered)
+  const loadRtoStats = async () => {
+    if (!shop) return;
+    
+    try {
+      const params = new URLSearchParams({ shop });
+      if (fromDate) params.append('fromDate', fromDate);
+      if (toDate) params.append('toDate', toDate);
+      // Don't include reason filter for stats - we want all stats
+      
+      const response = await fetch(`/api/new-rto-bucket-orders?${params.toString()}`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setRtoStats(data.stats || {});
+        console.log('[Dashboard2] RTO stats loaded:', data.stats);
+      } else {
+        console.error('[Dashboard2] Failed to load RTO stats:', data.error);
+        setRtoStats({});
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading RTO stats:', err);
+      setRtoStats({});
+    }
+  };
+
+  // Load new RTO bucket orders (with optional reason filter)
+  const loadNewRtoBucketOrders = async (page = 1) => {
+    if (!shop) return;
+    
+    setLoadingRto(true);
+    try {
+      const params = new URLSearchParams({ 
+        shop,
+        page: page.toString(),
+        limit: '100' // Limit initial load for better performance
+      });
+      if (fromDate) params.append('fromDate', fromDate);
+      if (toDate) params.append('toDate', toDate);
+      if (activeStatCard) params.append('reason', activeStatCard);
+      
+      const response = await fetch(`/api/new-rto-bucket-orders?${params.toString()}`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setNewRtoOrders(data.orders || []);
+        setRtoOrdersPagination(data.pagination || {
+          totalCount: data.totalCount || 0,
+          totalPages: Math.ceil((data.totalCount || 0) / 100),
+          currentPage: page,
+          hasNext: false,
+          hasPrev: false,
+          limit: 100
+        });
+        // Don't update stats here - stats are loaded separately and always unfiltered
+        console.log('[Dashboard2] New RTO bucket orders loaded:', {
+          count: data.orders?.length || 0,
+          totalCount: data.totalCount,
+          filteredBy: activeStatCard || 'none',
+          page: data.pagination?.currentPage || page
+        });
+      } else {
+        console.error('[Dashboard2] Failed to load new RTO bucket orders:', data.error);
+        setNewRtoOrders([]);
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading new RTO bucket orders:', err);
+      setNewRtoOrders([]);
+    } finally {
+      setLoadingRto(false);
+    }
+  };
+
+  // Load agents
+  const loadAgents = async () => {
+    if (!shop) return;
+    
+    setLoadingAgents(true);
+    try {
+      const data = await api.getScripts(shop);
+      // API returns { scripts: [...] } directly
+      if (data && Array.isArray(data.scripts)) {
+        setAgents(data.scripts);
+      } else if (Array.isArray(data)) {
+        // Fallback: if API returns array directly
+        setAgents(data);
+      } else {
+        setAgents([]);
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading agents:', err);
+      setAgents([]);
+    } finally {
+      setLoadingAgents(false);
+    }
+  };
+
+  // Load standard orders
+  const loadStandardOrders = async (page = 1) => {
+    if (!shop) return;
+    
+    setLoadingStandard(true);
+    try {
+      const params = new URLSearchParams({ 
+        shop,
+        page: page.toString(),
+        limit: '20'
+      });
+      if (fromDate) params.append('fromDate', fromDate);
+      if (toDate) params.append('toDate', toDate);
+      
+      const response = await fetch(`/api/standard-orders?${params.toString()}`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setStandardOrders(data.orders || []);
+        setStandardOrdersPagination(data.pagination || {
+          totalCount: 0,
+          totalPages: 0,
+          currentPage: 1,
+          hasNext: false,
+          hasPrev: false
+        });
+      } else {
+        console.error('[Dashboard2] Failed to load standard orders:', data.error);
+        setStandardOrders([]);
+      }
+    } catch (err) {
+      console.error('[Dashboard2] Error loading standard orders:', err);
+      setStandardOrders([]);
+    } finally {
+      setLoadingStandard(false);
+    }
+  };
+
+  // Close create dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (createDropdownRef.current && !createDropdownRef.current.contains(event.target)) {
+        setShowCreateDropdown(false);
+      }
+      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
+        setShowFilterDropdown(false);
+      }
+      if (pickupFilterRef.current && !pickupFilterRef.current.contains(event.target)) {
+        setShowPickupFilterDropdown(false);
+      }
+      if (stickyCreateDropdownRef.current && !stickyCreateDropdownRef.current.contains(event.target)) {
+        setShowCreateDropdown(false);
+      }
+      if (stickyFilterDropdownRef.current && !stickyFilterDropdownRef.current.contains(event.target)) {
+        setShowFilterDropdown(false);
+      }
+    };
+
+    if (showCreateDropdown || showFilterDropdown || showPickupFilterDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCreateDropdown, showFilterDropdown, showPickupFilterDropdown]);
+
+
+  // Load all data
+  useEffect(() => {
+    if (!shop) {
+      setError('No shop parameter found');
+      setLoading(false);
+      return;
+    }
+
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Check if test shop
+        try {
+            const balanceData = await api.getShopBalance(shop);
+            if (balanceData.success && balanceData.data) {
+              const testShopStatus = balanceData.data.isTestShop === true;
+              setIsTestShop(testShopStatus);
+              // Redirect to onboarding if test shop
+              if (testShopStatus) {
+                navigate(`/onboarding?shop=${encodeURIComponent(shop)}`, { replace: true });
+                return;
+              }
+            }
+        } catch (e) {
+          console.error('Error checking shop:', e);
+          setIsTestShop(false);
+        }
+
+        // Load initial data - optimize: load stats first, then orders
+        // Stats are needed immediately for display, orders can load after
+        await Promise.all([
+          loadDashboardStats(), // Load dashboard stats tab data
+          loadDashboardCardMetrics(), // Load headline card metrics
+          loadRtoStats(), // Load RTO stats (unfiltered) - critical for UI
+          loadClippings() // Load clippings
+        ]);
+        // Load orders and agents in parallel (non-blocking)
+        Promise.all([
+          loadNewRtoBucketOrders(), // Load orders (may be filtered)
+          loadStandardOrders(1),
+          loadAgents() // Load agents
+        ]).catch(err => console.error('Error loading data:', err));
+      } catch (err) {
+        console.error('Error loading dashboard data:', err);
+        setError(err.message || 'Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [shop]);
+
+  // Check for payment success in URL params and show modal
+  useEffect(() => {
+    if (searchParams && shop) {
+      const payment = searchParams.get('payment');
+      const amount = searchParams.get('amount');
+
+      if (payment === 'success' && amount) {
+        setPaymentSuccessAmount(parseFloat(amount));
+        setShowPaymentSuccessModal(true);
+
+        // Clean URL
+        const newUrl = window.location.pathname + '?shop=' + encodeURIComponent(shop);
+        window.history.replaceState({}, document.title, newUrl);
+      }
+    }
+  }, [searchParams, shop]);
+
+  const closePaymentSuccessModal = () => {
+    setShowPaymentSuccessModal(false);
+  };
+
+  // Reload when date filters change
+  useEffect(() => {
+    if (shop) {
+      loadDashboardStats(); // Reload dashboard stats when date changes
+      loadDashboardCardMetrics(); // Reload headline metrics when date changes
+      loadRtoStats(); // Reload stats when date changes
+      loadNewRtoBucketOrders(); // Reload orders
+      loadStandardOrders(1);
+    }
+  }, [fromDate, toDate, shop]);
+
+  // Reload RTO orders when stat card changes
+  useEffect(() => {
+    if (shop) {
+      loadNewRtoBucketOrders();
+    }
+  }, [activeStatCard, shop]);
+
+  // Handle stat card click
+  const handleStatCardClick = (reason) => {
+    if (activeStatCard === reason) {
+      // Deselect if clicking the same card
+      setActiveStatCard(null);
+    } else {
+      setActiveStatCard(reason);
+    }
+  };
+
+  // Handle order selection
+  const toggleOrderSelection = (orderId) => {
+    setSelectedOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle select all
+  const toggleSelectAll = () => {
+    if (selectAll) {
+      // Deselect all visible orders
+      const visibleOrderIds = new Set(newRtoOrders.map(o => o.orderId || o.id));
+      setSelectedOrders(prev => {
+        const newSet = new Set(prev);
+        visibleOrderIds.forEach(id => newSet.delete(id));
+        return newSet;
+      });
+      setSelectAll(false);
+    } else {
+      // Select all visible orders
+      const visibleOrderIds = newRtoOrders.map(o => o.orderId || o.id);
+      setSelectedOrders(prev => {
+        const newSet = new Set(prev);
+        visibleOrderIds.forEach(id => newSet.add(id));
+        return newSet;
+      });
+      setSelectAll(true);
+    }
+  };
+
+  // Update selectAll state when orders or selection changes
+  useEffect(() => {
+    if (newRtoOrders.length === 0) {
+      setSelectAll(false);
+      return;
+    }
+    const visibleOrderIds = new Set(newRtoOrders.map(o => o.orderId || o.id));
+    const allSelected = Array.from(visibleOrderIds).every(id => selectedOrders.has(id));
+    setSelectAll(allSelected && visibleOrderIds.size > 0);
+  }, [newRtoOrders, selectedOrders]);
+
+  // Handle standard order selection
+  const toggleStandardOrderSelection = (orderId) => {
+    setSelectedStandardOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle select all standard orders
+  const toggleSelectAllStandard = () => {
+    if (selectAllStandard) {
+      const visibleOrderIds = new Set(standardOrders.map(o => o.orderId || o.id));
+      setSelectedStandardOrders(prev => {
+        const newSet = new Set(prev);
+        visibleOrderIds.forEach(id => newSet.delete(id));
+        return newSet;
+      });
+      setSelectAllStandard(false);
+    } else {
+      const visibleOrderIds = standardOrders.map(o => o.orderId || o.id);
+      setSelectedStandardOrders(prev => {
+        const newSet = new Set(prev);
+        visibleOrderIds.forEach(id => newSet.add(id));
+        return newSet;
+      });
+      setSelectAllStandard(true);
+    }
+  };
+
+  // Update selectAllStandard state when orders or selection changes
+  useEffect(() => {
+    if (standardOrders.length === 0) {
+      setSelectAllStandard(false);
+      return;
+    }
+    const visibleOrderIds = new Set(standardOrders.map(o => o.orderId || o.id));
+    const allSelected = Array.from(visibleOrderIds).every(id => selectedStandardOrders.has(id));
+    setSelectAllStandard(allSelected && visibleOrderIds.size > 0);
+  }, [standardOrders, selectedStandardOrders]);
+
+  // Handle create clip
+  const handleCreateClip = async () => {
+    const allSelectedOrderIds = [
+      ...Array.from(selectedOrders),
+      ...Array.from(selectedStandardOrders)
+    ];
+
+    if (allSelectedOrderIds.length === 0) {
+      alert('Please select at least one order');
+      return;
+    }
+
+    if (!clipName || clipName.trim() === '') {
+      alert('Please enter a clip name');
+      return;
+    }
+
+    if (!shop) {
+      alert('Shop information is missing');
+      return;
+    }
+
+    setCreatingClip(true);
+    try {
+      const response = await fetch('/api/clips', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: clipName.trim(),
+          description: clipDescription.trim() || null,
+          orderIds: allSelectedOrderIds,
+          shop
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(`✅ Clip "${clipName.trim()}" created successfully with ${allSelectedOrderIds.length} orders!`);
+        console.log('[Dashboard2] Clip created:', data.clip);
+        
+        // Reset form and close modal
+        setClipName('');
+        setClipDescription('');
+        setShowCreateClipModal(false);
+        setSelectedOrders(new Set());
+        setSelectedStandardOrders(new Set());
+        setSelectAll(false);
+        setSelectAllStandard(false);
+      } else {
+        alert('❌ Failed to create clip: ' + (data.error || 'Unknown error'));
+        console.error('[Dashboard2] Failed to create clip:', data.error);
+      }
+    } catch (error) {
+      console.error('[Dashboard2] Error creating clip:', error);
+      alert('❌ Error creating clip: ' + error.message);
+    } finally {
+      setCreatingClip(false);
+    }
+  };
+
+  // Handle tag orders
+  const handleTagOrders = async () => {
+    if (selectedOrders.size === 0) {
+      alert('Please select at least one order');
+      return;
+    }
+
+    if (!shop) {
+      alert('Shop information is missing');
+      return;
+    }
+
+    const tag = prompt('Enter tag name:');
+    if (!tag || tag.trim() === '') {
+      return;
+    }
+
+    try {
+      const orderIds = Array.from(selectedOrders);
+      const response = await fetch('/api/tag-orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          orderIds,
+          tag: tag.trim(),
+          shop
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(`✅ ${data.message || `Tagged ${orderIds.length} orders with "${tag.trim()}"`}`);
+        console.log('[Dashboard2] Tag orders success:', { orderIds, tag: tag.trim(), results: data.results });
+      } else {
+        alert('❌ Failed to tag orders: ' + (data.error || 'Unknown error'));
+        console.error('[Dashboard2] Failed to tag orders:', data.error);
+      }
+    } catch (error) {
+      console.error('[Dashboard2] Error tagging orders:', error);
+      alert('❌ Error tagging orders: ' + error.message);
+    }
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      
+      // Get time in 12-hour format
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'pm' : 'am';
+      const displayHours = hours % 12 || 12;
+      const displayMinutes = minutes.toString().padStart(2, '0');
+      const timeStr = `${displayHours}:${displayMinutes} ${ampm}`;
+      
+      // Check if today
+      if (dateOnly.getTime() === today.getTime()) {
+        return `Today at ${timeStr}`;
+      }
+      
+      // Check if yesterday
+      if (dateOnly.getTime() === yesterday.getTime()) {
+        return `Yesterday at ${timeStr}`;
+      }
+      
+      // Check if same week (within last 7 days)
+      const daysDiff = Math.floor((today.getTime() - dateOnly.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysDiff < 7) {
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayName = dayNames[date.getDay()];
+        return `${dayName} at ${timeStr}`;
+      }
+      
+      // Check if same year
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthName = monthNames[date.getMonth()];
+      const day = date.getDate();
+      
+      if (date.getFullYear() === now.getFullYear()) {
+        return `${day} ${monthName} at ${timeStr}`;
+      } else {
+        // Past year - show year in 2 digits
+        const year = date.getFullYear().toString().slice(-2);
+        return `${day} ${monthName} ${year} at ${timeStr}`;
+      }
+    } catch (e) {
+      return dateString.toString().slice(0, 19).replace('T', ' ');
+    }
+  };
+
+  // Get reason display name
+  const getReasonDisplayName = (reason) => {
+    const reasonMap = {
+      'bad_address': 'Bad Address',
+      'impulsive': 'Impulsive Orders',
+      'high_intent': 'High Intent',
+      'sussy': 'Sussy',
+      'spam': 'Spam',
+      'unknown': 'Unknown'
+    };
+    return reasonMap[reason] || reason || 'Unknown';
+  };
+
+  // Helper function to get payment badge
+  const getPaymentBadge = (paymentMethod) => {
+    const isPrepaid = (paymentMethod || '').toLowerCase().includes('prepaid') || 
+                      (paymentMethod || '').toLowerCase().includes('paid');
+    
+    if (isPrepaid) {
+      return (
+        <span style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px',
+          background: 'rgba(0, 0, 0, 0.06)',
+          border: 'none',
+          borderRadius: '8px',
+          paddingTop: '3px',
+          paddingBottom: '3px',
+          paddingLeft: '6px',
+          paddingRight: '6px',
+          fontSize: '11px',
+          fontFamily: 'Manrope, sans-serif'
+        }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+            <path d="M2 5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3z" fill="#6B7280"/>
+          </svg>
+          <span style={{ color: '#1f2937', fontWeight: 600, fontSize: '12px' }}>Prepaid</span>
+        </span>
+      );
+    } else {
+      return (
+        <span style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px',
+          background: '#FFD6A4',
+          border: 'none',
+          borderRadius: '8px',
+          paddingTop: '3px',
+          paddingBottom: '3px',
+          paddingLeft: '6px',
+          paddingRight: '6px',
+          fontSize: '11px',
+          fontFamily: 'Manrope, sans-serif'
+        }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+            <path fillRule="evenodd" d="M2 5.125c0-1.726 1.4-3.125 3.125-3.125h1.75c1.726 0 3.125 1.4 3.125 3.125v1.75c0 1.726-1.4 3.125-3.125 3.125h-1.75a3.125 3.125 0 0 1-3.125-3.125zm2.47-1.758c-.455.17-.828.513-1.037.949l4.252 4.25c.435-.208.778-.58.948-1.037zm1.651-.117 2.629 2.629v-.754c0-1.036-.84-1.875-1.875-1.875zm-2.871 3.625v-.975l2.85 2.85h-.975a1.875 1.875 0 0 1-1.875-1.875" fill="#5E4200"/>
+          </svg>
+          <span style={{ color: '#5E4200', fontWeight: 600, fontSize: '12px' }}>COD</span>
+        </span>
+      );
+    }
+  };
+
+  // Helper function to get fulfillment badge
+  const getFulfillmentBadge = (fulfillmentStatus) => {
+    const status = (fulfillmentStatus || 'unfulfilled').toLowerCase();
+    const isFulfilled = status === 'fulfilled' || (status.includes('fulfilled') && !status.includes('unfulfilled'));
+    
+    if (isFulfilled) {
+      return (
+        <span style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px',
+          background: 'rgba(0, 0, 0, 0.06)',
+          border: 'none',
+          borderRadius: '8px',
+          paddingTop: '3px',
+          paddingBottom: '3px',
+          paddingLeft: '6px',
+          paddingRight: '6px',
+          fontSize: '11px',
+          fontFamily: 'Manrope, sans-serif'
+        }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+            <path d="M2 5a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3z" fill="#6B7280"/>
+          </svg>
+          <span style={{ color: '#1f2937', fontWeight: 600, fontSize: '12px' }}>Fulfilled</span>
+        </span>
+      );
+    } else {
+      return (
+        <span style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px',
+          background: '#FFEB78',
+          border: 'none',
+          borderRadius: '8px',
+          paddingTop: '3px',
+          paddingBottom: '3px',
+          paddingLeft: '6px',
+          paddingRight: '6px',
+          fontSize: '11px',
+          fontFamily: 'Manrope, sans-serif'
+        }}>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+            <path fillRule="evenodd" d="M2 5.125c0-1.726 1.4-3.125 3.125-3.125h1.75c1.726 0 3.125 1.4 3.125 3.125v1.75c0 1.726-1.4 3.125-3.125 3.125h-1.75a3.125 3.125 0 0 1-3.125-3.125zm3.125-1.875c-1.036 0-1.875.84-1.875 1.875v1.75c0 1.036.84 1.875 1.875 1.875h1.75c1.036 0 1.875-.84 1.875-1.875v-1.75c0-1.036-.84-1.875-1.875-1.875z" fill="#4F4700"/>
+          </svg>
+          <span style={{ color: '#4F4700', fontWeight: 600, fontSize: '12px' }}>Unfulfilled</span>
+        </span>
+      );
+    }
+  };
+
+  // Helper function to get reason badge with icon
+  const getReasonBadge = (reason, orderId = null) => {
+    const reasonConfig = {
+      'bad_address': { 
+        name: 'Bad Address', 
+        bgColor: '#D5EBFF',
+        textColor: '#003A5A',
+        iconPath: '/images/badaddress.svg',
+        meaning: 'meaning that the addresses kharab hai',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'impulsive': { 
+        name: 'Impulsive Orders', 
+        bgColor: '#D5EBFF',
+        textColor: '#003A5A',
+        iconPath: '/images/impulsive.svg',
+        meaning: 'meaning that the orders are impulsive',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'high_intent': { 
+        name: 'High Intent', 
+        bgColor: '#D1FAE5',
+        textColor: '#003A5A',
+        iconPath: '/images/intent.svg',
+        meaning: 'meaning that the customer has high intent',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'sussy': { 
+        name: 'Sussy', 
+        bgColor: '#D5EBFF',
+        textColor: '#003A5A',
+        iconPath: '/images/sussy.svg',
+        meaning: 'meaning that the orders are suspicious',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'spam': { 
+        name: 'Spam', 
+        bgColor: '#FEE2E2',
+        textColor: '#003A5A',
+        iconPath: '/images/spam.svg',
+        meaning: 'meaning that the orders are spam',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      }
+    };
+
+    const config = reasonConfig[reason] || { 
+      name: 'Unknown', 
+      bgColor: '#F9FAFB',
+      textColor: '#1f2937',
+      iconPath: '/images/badaddress.svg',
+      meaning: '',
+      reasons: []
+    };
+
+    const handleMouseEnter = (e) => {
+      if (!reason || !orderId) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      setHoveredReason({ reason, orderId });
+      setReasonTooltipPosition({
+        top: rect.bottom + 8,
+        left: rect.left
+      });
+    };
+
+    const handleMouseLeave = () => {
+      setHoveredReason(null);
+    };
+
+    return (
+      <span 
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '4px',
+          background: config.bgColor,
+          border: 'none',
+          borderRadius: '8px',
+          paddingTop: '3px',
+          paddingBottom: '3px',
+          paddingLeft: '6px',
+          paddingRight: '6px',
+          fontSize: '11px',
+          fontFamily: 'Manrope, sans-serif',
+          position: 'relative',
+          cursor: 'pointer'
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <img 
+          src={config.iconPath} 
+          alt={config.name}
+          style={{ 
+            width: '12px', 
+            height: '12px', 
+            flexShrink: 0,
+            display: 'block'
+          }} 
+        />
+        <span style={{ color: config.textColor, fontWeight: 600, fontSize: '12px' }}>{config.name}</span>
+      </span>
+    );
+  };
+
+  // Helper function to get reason tooltip content
+  const getReasonTooltipContent = (reason) => {
+    const reasonConfig = {
+      'bad_address': { 
+        name: 'Bad Address', 
+        meaning: 'meaning that the addresses kharab hai',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'impulsive': { 
+        name: 'Impulsive Orders', 
+        meaning: 'meaning that the orders are impulsive',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'high_intent': { 
+        name: 'High Intent', 
+        meaning: 'meaning that the customer has high intent',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'sussy': { 
+        name: 'Sussy', 
+        meaning: 'meaning that the orders are suspicious',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      },
+      'spam': { 
+        name: 'Spam', 
+        meaning: 'meaning that the orders are spam',
+        reasons: [
+          { icon: '/images/eye.svg', text: '<10 line address' },
+          { icon: '/images/Scan_alt.svg', text: 'Unusual Words' },
+          { icon: '/images/Flag_alt.svg', text: 'Missing Fields' }
+        ]
+      }
+    };
+
+    return reasonConfig[reason] || { name: 'Unknown', meaning: '', reasons: [] };
+  };
+
+  // Close action menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openActionMenu && !event.target.closest('.action-menu-dropdown') && !event.target.closest('button.btn-icon')) {
+        setOpenActionMenu(null);
+      }
+    };
+
+    if (openActionMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openActionMenu]);
+
+  // Get filtered RTO orders (by active stat card)
+  // Handle sorting
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Sort orders
+  const sortedRtoOrders = [...(activeStatCard
+    ? newRtoOrders.filter(order => order.newRtoBucketReason === activeStatCard)
+    : newRtoOrders)].sort((a, b) => {
+    let aVal, bVal;
+    
+    switch (sortColumn) {
+      case 'order':
+        aVal = (a.orderNumber || a.orderId || a.id || '').toString();
+        bVal = (b.orderNumber || b.orderId || b.id || '').toString();
+        break;
+      case 'date':
+        aVal = new Date(a.createdAt || 0).getTime();
+        bVal = new Date(b.createdAt || 0).getTime();
+        break;
+      case 'customer':
+        aVal = (a.customerName || '').toString().toLowerCase();
+        bVal = (b.customerName || '').toString().toLowerCase();
+        break;
+      case 'phone':
+        aVal = (a.customerPhone || '').toString();
+        bVal = (b.customerPhone || '').toString();
+        break;
+      case 'address':
+        aVal = (a.customerAddress || '').toString().toLowerCase();
+        bVal = (b.customerAddress || '').toString().toLowerCase();
+        break;
+      case 'payment':
+        aVal = (a.paymentMethod || a.paymentStatus || 'COD').toString().toLowerCase();
+        bVal = (b.paymentMethod || b.paymentStatus || 'COD').toString().toLowerCase();
+        break;
+      case 'fulfillment':
+        aVal = (a.fulfillmentStatus || 'unfulfilled').toString().toLowerCase();
+        bVal = (b.fulfillmentStatus || 'unfulfilled').toString().toLowerCase();
+        break;
+      case 'reason':
+        aVal = (a.newRtoBucketReason || '').toString().toLowerCase();
+        bVal = (b.newRtoBucketReason || '').toString().toLowerCase();
+        break;
+      default:
+        return 0;
+    }
+    
+    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const filteredRtoOrders = sortedRtoOrders;
+
+  // Track when RTO Bucket tab is entered for graph animation
+  useEffect(() => {
+    if (activeTab === 'rto-bucket') {
+      setRtoTabEntered(true);
+      // Reset animation after a delay so it can animate again if user switches tabs
+      const timer = setTimeout(() => {
+        setRtoTabEntered(false);
+      }, 1500); // Reset after animation completes
+      return () => clearTimeout(timer);
+    } else {
+      setRtoTabEntered(false);
+    }
+  }, [activeTab]);
+
+  // Intersection Observer for sticky header detection
+  useEffect(() => {
+    if (activeTab !== 'rto-bucket') {
+      setShowStickyHeader(false);
+      return;
+    }
+
+    const headerElement = tableHeaderRef.current;
+    const containerElement = tableContainerRef.current;
+
+    if (!headerElement || !containerElement) {
+      setShowStickyHeader(false);
+      return;
+    }
+
+    // Calculate tabs bar bottom position
+    const tabsBarBottom = 160; // TopBar (100px) + tabs bar (60px)
+
+    // Get table container's position and width for exact matching
+    const updateStickyHeaderPosition = () => {
+      if (containerElement) {
+        const containerRect = containerElement.getBoundingClientRect();
+        const sidebarWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width')) || 250;
+        // Calculate left offset from sidebar
+        setStickyHeaderLeft(containerRect.left - sidebarWidth);
+        // Set width to match table container exactly
+        setStickyHeaderWidth(`${containerRect.width}px`);
+      }
+    };
+
+    // Unified scroll handler that checks both header and container positions
+    const handleScroll = () => {
+      if (!headerElement || !containerElement) return;
+
+      const headerRect = headerElement.getBoundingClientRect();
+      const containerRect = containerElement.getBoundingClientRect();
+      
+      // Check if we're above the table (container top is below tabs bar)
+      const isAboveTable = containerRect.top > tabsBarBottom;
+      
+      // Check if original header is visible (header top is below tabs bar)
+      const isHeaderVisible = headerRect.top > tabsBarBottom;
+      
+      // Check if header is scrolled past (header top is at or above tabs bar)
+      const isScrolledPast = headerRect.top <= tabsBarBottom;
+      
+      // Show sticky header ONLY when:
+      // 1. We're not above the table (container is at or past tabs bar)
+      // 2. Original header is scrolled past tabs bar
+      // 3. Original header is not visible (above viewport or hidden)
+      const shouldShow = !isAboveTable && isScrolledPast && !isHeaderVisible;
+      
+      // Use functional update to avoid stale state
+      setShowStickyHeader(prev => {
+        if (shouldShow && !prev) {
+          updateStickyHeaderPosition();
+          return true;
+        } else if (!shouldShow && prev) {
+          return false;
+        }
+        // Update position if already showing
+        if (shouldShow && prev) {
+          updateStickyHeaderPosition();
+        }
+        return prev;
+      });
+    };
+
+    // Intersection Observer as backup/optimization
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Trigger scroll handler when intersection changes
+        handleScroll();
+      },
+      {
+        root: null, // viewport
+        rootMargin: `-${tabsBarBottom}px 0px 0px 0px`,
+        threshold: [0, 0.1, 0.5, 1] // Multiple thresholds for better detection
+      }
+    );
+
+    // Observe both header and container for better detection
+    observer.observe(headerElement);
+    observer.observe(containerElement);
+    
+    // Resize handler
+    const handleResize = () => {
+      updateStickyHeaderPosition();
+      handleScroll();
+    };
+
+    // Update position on scroll and resize
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+    
+    // Initial check
+    updateStickyHeaderPosition();
+    handleScroll();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [activeTab, filteredRtoOrders]);
+
+  if (!shop) {
+    return (
+      <div className="dashboard-container">
+        <div className="error-message">
+          <p>No shop parameter found. Please select a shop.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 'calc(100vh - 200px)',
+          gap: '20px',
+          padding: '40px 20px'
+        }}>
+          <DotLottieReact
+            src="https://lottie.host/d76bbc89-666d-46a0-898b-cc343e4fc5b8/pxRPeuoOie.lottie"
+            loop
+            autoplay
+            style={{ width: '300px', height: '300px' }}
+          />
+          <div style={{
+            fontSize: '18px',
+            fontWeight: 500,
+            color: '#6B7280',
+            fontFamily: 'Manrope, sans-serif'
+          }}>
+            Building Dashboard ...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`dashboard-container ${isTestShop ? 'dashboard-container--blurred' : ''}`}>
+      {error && (
+        <div className="error-message">
+          <p>Error: {error}</p>
+        </div>
+      )}
+
+      {/* Payment Success Modal */}
+      {showPaymentSuccessModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.6)',
+          zIndex: 10002,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '32px 40px',
+            textAlign: 'center',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          }}>
+            {/* Lottie Animation */}
+            {paymentAnimationData ? (
+              <DotLottieReact
+                animationData={paymentAnimationData}
+                loop
+                autoplay
+                style={{ width: '200px', height: '200px', margin: '0 auto 20px' }}
+              />
+            ) : (
+              <div style={{ width: '200px', height: '200px', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                Loading...
+              </div>
+            )}
+            {/* Success Message */}
+            <h2 style={{
+              margin: '0 0 8px 0',
+              color: '#10B981',
+              fontSize: '24px',
+              fontWeight: 600,
+              fontFamily: 'Manrope, sans-serif',
+            }}>
+              Payment Successful!
+            </h2>
+            <p style={{
+              margin: '0 0 24px 0',
+              color: '#6B7280',
+              fontSize: '16px',
+              fontFamily: 'Manrope, sans-serif',
+            }}>
+              Payment of ₹{paymentSuccessAmount} completed successfully
+            </p>
+            <button
+              onClick={closePaymentSuccessModal}
+              style={{
+                padding: '12px 32px',
+                background: '#10B981',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                fontFamily: 'Manrope, sans-serif',
+              }}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Tabs and Action Buttons Bar - Always visible */}
+      <div className="dashboard-tabs-container dashboard-tabs-container--sticky">
+          <div className="dashboard-tabs">
+            <button
+              className={`dashboard-tab ${activeTab === 'stats' ? 'active' : ''}`}
+              onClick={() => setActiveTab('stats')}
+            >
+              Analytics
+            </button>
+          </div>
+          <div className="dashboard-actions">
+            <div className="dashboard-create-wrapper" ref={stickyCreateDropdownRef}>
+              <button
+                className="dashboard-create-btn"
+                onClick={() => setShowCreateDropdown(!showCreateDropdown)}
+              >
+                <img src="/images/create.svg" alt="Create" width="16" height="16" />
+                <span>Create</span>
+              </button>
+              {showCreateDropdown && (
+                <div className="dashboard-create-dropdown">
+                  <button className="dashboard-dropdown-item" onClick={() => setShowCreateDropdown(false)}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                      <path d="M8 5V11M5 8H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <span>New Clip</span>
+                  </button>
+                  <button className="dashboard-dropdown-item" onClick={() => setShowCreateDropdown(false)}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                      <path d="M8 5V11M5 8H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <span>New Campaign</span>
+                  </button>
+                </div>
+              )}
+            </div>
+            <button className="dashboard-action-btn">
+              <img src="/images/sort.svg" alt="Sort" width="20" height="20" />
+            </button>
+            <div className="dashboard-filter-wrapper" ref={stickyFilterDropdownRef}>
+              <button 
+                className="dashboard-action-btn"
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+              >
+                <img src="/images/filter.svg" alt="Filter" width="20" height="20" />
+              </button>
+              {showFilterDropdown && (
+                <div className="dashboard-filter-dropdown">
+                  <div className="dashboard-filter-header">Filter by Date</div>
+                  <div className="dashboard-filter-content">
+                    <div className="dashboard-filter-field">
+                      <label>From</label>
+                      <input
+                        type="date"
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                      />
+                    </div>
+                    <div className="dashboard-filter-field">
+                      <label>To</label>
+                      <input
+                        type="date"
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="dashboard-filter-actions">
+                    <button
+                      className="dashboard-filter-btn dashboard-filter-btn--secondary"
+                      onClick={() => {
+                        setFromDate('');
+                        setToDate('');
+                        setShowFilterDropdown(false);
+                      }}
+                    >
+                      Clear
+                    </button>
+                    <button
+                      className="dashboard-filter-btn dashboard-filter-btn--primary"
+                      onClick={() => setShowFilterDropdown(false)}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+       {/* Tab Content */}
+       {activeTab === 'stats' && (
+         <div className="dashboard-tab-content">
+           <div className="stats-grid">
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgba(0, 0, 0, 0.9)' }}>
+                  <span>New Orders</span>
+                </div>
+                <div className="stat-box-content">
+                  <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                    {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.newOrders || 0).toLocaleString()}
+                  </div>
+                  <div className="stat-box-change" style={{ color: 'rgb(0, 0, 0)' }}>
+                    <span>Yesterday</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgba(0, 0, 0, 0.9)' }}>
+                  <span>Orders Called</span>
+                </div>
+                <div className="stat-box-content">
+                  <div className="stat-box-number" style={{ color: 'rgba(0, 0, 0, 0.9)' }}>
+                    {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.ordersCalled || 0).toLocaleString()}
+                  </div>
+                  <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                    <span>Yesterday</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgba(0, 0, 0, 0.9)' }}>
+                  <span>Initiated Calls</span>
+                </div>
+                <div className="stat-box-content">
+                  <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                    {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.initiatedCalls || 0).toLocaleString()}
+                  </div>
+                  <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                    <span>Yesterday</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgba(0, 0, 0, 0.9)' }}>
+                  <span>Pick Rate</span>
+                </div>
+                <div className="stat-box-content">
+                  <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                    {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.pickRate || '0.00') + '%'}
+                  </div>
+                  <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                    <span>By Order • Yesterday</span>
+                  </div>
+                </div>
+              </div>
+
+             <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+               <div className="stat-box-title" style={{ color: 'rgb(0, 0, 0)' }}>
+                 <span>Conversion Rate</span>
+                 <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="stat-box-top-icon">
+                   <rect x="1" y="1" width="38" height="38" rx="19" stroke="#ffffff" strokeWidth="2"/>
+                   <path d="M14.2983 28.0284L12.4787 26.1989L23.5057 15.152H15.054L15.0739 12.6364H27.8509V25.4233H25.3153L25.3352 16.9716L14.2983 28.0284Z" fill="#ffffff"/>
+                 </svg>
+               </div>
+               <div className="stat-box-content">
+                 <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                   {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.conversionRate || '0.00') + '%'}
+                 </div>
+                 <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                   <span>Yesterday</span>
+                 </div>
+               </div>
+             </div>
+
+             <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+               <div className="stat-box-title" style={{ color: 'rgb(0, 0, 0)' }}>
+                 <span>Unclear Rate</span>
+                 <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="stat-box-top-icon">
+                   <rect x="1" y="1" width="38" height="38" rx="19" stroke="#ffffff" strokeWidth="2"/>
+                   <path d="M14.2983 28.0284L12.4787 26.1989L23.5057 15.152H15.054L15.0739 12.6364H27.8509V25.4233H25.3153L25.3352 16.9716L14.2983 28.0284Z" fill="#ffffff"/>
+                 </svg>
+               </div>
+               <div className="stat-box-content">
+                 <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                   {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.unclearRate || '0.00') + '%'}
+                 </div>
+                 <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                   <span>Yesterday</span>
+                 </div>
+               </div>
+             </div>
+
+             <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+               <div className="stat-box-title" style={{ color: 'rgb(0, 0, 0)' }}>
+                 <span>Cancel Rate</span>
+                 <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="stat-box-top-icon">
+                   <rect x="1" y="1" width="38" height="38" rx="19" stroke="#ffffff" strokeWidth="2"/>
+                   <path d="M14.2983 28.0284L12.4787 26.1989L23.5057 15.152H15.054L15.0739 12.6364H27.8509V25.4233H25.3153L25.3352 16.9716L14.2983 28.0284Z" fill="#ffffff"/>
+                 </svg>
+               </div>
+               <div className="stat-box-content">
+                 <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                   {loadingCardMetrics ? '—' : (cardMetrics.yesterdayStats?.cancelRate || '0.00') + '%'}
+                 </div>
+                 <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                   <span>Yesterday</span>
+                 </div>
+               </div>
+             </div>
+
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgb(0, 0, 0)' }}>
+                  <span>Wallet Balance</span>
+                </div>
+                <div className="stat-box-content">
+                  <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                    {loadingCardMetrics ? '—' : (cardMetrics.walletStats?.callsPossible || 0).toLocaleString()}
+                  </div>
+                  <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                    <span>Calls Available</span>
+                  </div>
+                </div>
+              </div>
+
+               <div className="stat-box stat-box-3x1">
+                  <div className="stat-box-title">
+                    <span>Calling Window</span>
+                  </div>
+                  <div className="stat-box-content" style={{ paddingTop: '8px' }}>
+                    <TimeWindowBar 
+                      startTime={cardMetrics.walletStats?.allowedTimeStart || "09:00"} 
+                      endTime={cardMetrics.walletStats?.allowedTimeEnd || "18:00"}
+                    />
+                  </div>
+                </div>
+
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgb(0, 0, 0)' }}>
+                  <span>Remaining Spending Limit</span>
+                </div>
+                <div className="stat-box-content">
+                  <div className="stat-box-number" style={{ color: 'rgb(0, 0, 0)' }}>
+                    {loadingCardMetrics ? '—' : `₹${(cardMetrics.remainingSpendingLimit || 0).toLocaleString()}`}
+                  </div>
+                  <div className="stat-box-change" style={{ color: 'rgba(0, 0, 0, 0.8)' }}>
+                    <span>Balance - Credit Limit</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-box stat-box-1x1" style={{ background: 'linear-gradient(135deg,rgb(255, 255, 255) 0%,rgb(255, 255, 255) 100%)' }}>
+                <div className="stat-box-title" style={{ color: 'rgb(0, 0, 0)' }}>
+                  <span>Next Scheduled Call</span>
+                </div>
+                <div className="stat-box-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                  {loadingCardMetrics ? (
+                    <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(0, 0, 0, 0.8)' }}>Loading...</div>
+                  ) : cardMetrics.nextScheduledCall ? (
+                    <>
+                      <div className="stat-box-number" style={{ fontSize: '18px', marginBottom: '6px', color: 'rgb(0, 0, 0)' }}>
+                        #{cardMetrics.nextScheduledCall.orderNumber}
+                      </div>
+                      <div className="stat-box-change" style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.8)' }}>
+                        {cardMetrics.nextScheduledCall.scheduledTime ? new Date(cardMetrics.nextScheduledCall.scheduledTime).toLocaleString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric', 
+                          hour: '2-digit', 
+                          minute: '2-digit'
+                        }) : 'TBD'}
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(0, 0, 0, 0.7)' }}>No scheduled calls</div>
+                  )}
+                </div>
+              </div>
+           </div>
+         </div>
+       )}
+
+      {/* RTO Bucket tab content moved to All Orders page */}
+      {false && (
+        <div className="dashboard-tab-content dashboard-tab-content--rto-bucket">
+      {/* RTO Bucket Boxes Section */}
+      <div style={{ marginBottom: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', width: '100%', maxWidth: '100%' }}>
+          {/* Bad Address, Impulsive Orders, High Intent, Sussy, Spam */}
+          {['bad_address', 'impulsive', 'high_intent', 'sussy', 'spam'].map((reason) => {
+            const count = rtoStats[reason] || 0;
+            const isActive = activeStatCard === reason;
+            // Generate consistent percentage change based on reason (you can replace with real data)
+            const reasonHash = reason.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const changePercent = ((reasonHash % 20) - 10) * 0.5; // Range: -5% to +5%
+            const isPositive = changePercent > 0;
+            
+            // No graph data - mini graphs are decorative only
+            const graphData = [];
+            
+            return (
+              <div
+                key={reason}
+                onClick={() => handleStatCardClick(reason)}
+                className={`stat-box ${isActive ? 'stat-box-gradient' : ''}`}
+              style={{
+                  padding: '16px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.2s ease',
+                  boxSizing: 'border-box',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* Title with dotted underline */}
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ 
+                    fontSize: '14px', 
+                    fontWeight: 600,
+                    color: isActive ? '#ffffff' : '#1f2937',
+                    fontFamily: 'Manrope, sans-serif',
+                    borderBottom: `1px dotted ${isActive ? 'rgba(255, 255, 255, 0.5)' : '#D1D5DB'}`,
+                    paddingBottom: '4px',
+                    display: 'inline-block'
+                  }}>
+                    {getReasonDisplayName(reason)}
+          </div>
+                </div>
+                
+                {/* Number, percentage, and graph in same horizontal line */}
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  width: '100%',
+                  overflow: 'hidden'
+                }}>
+                  <div className="stat-box-number" style={{ 
+                    fontSize: '28px', 
+                    fontWeight: 500,
+                    color: isActive ? '#ffffff' : '#1f2937',
+                    fontFamily: 'Manrope, sans-serif',
+                    lineHeight: 1.2,
+                    flexShrink: 0
+                  }}>
+                    {count}
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '3px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: isActive ? 'rgba(255, 255, 255, 0.8)' : '#6B7280',
+                    fontFamily: 'Manrope, sans-serif',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {isPositive ? (
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                        <path d="M6 2L10 6H7V10H5V6H2L6 2Z" fill="currentColor"/>
+                      </svg>
+                    ) : (
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                        <path d="M6 10L2 6H5V2H7V6H10L6 10Z" fill="currentColor"/>
+                      </svg>
+                    )}
+                    <span>{Math.abs(changePercent).toFixed(1)}%</span>
+                  </div>
+                  {/* Mini Graph */}
+                  <div style={{ flex: 1, minWidth: 0, maxWidth: '80px', overflow: 'hidden' }}>
+                    <MiniGraph data={graphData} isActive={isActive} animate={rtoTabEntered} />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          
+          {/* Create view box with dashed borders */}
+          <div
+            className="stat-box stat-box-no-hover"
+              style={{
+              padding: '16px',
+              cursor: 'pointer',
+              border: '2px dashed #D1D5DB',
+              background: '#ffffff',
+              minHeight: '120px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+              onClick={() => {
+              // TODO: Implement create view functionality
+              console.log('Create view clicked');
+              }}
+          >
+            <div className="stat-box-title" style={{ fontSize: '14px', marginBottom: '8px', width: '100%', justifyContent: 'center' }}>
+              <span>Create view</span>
+            </div>
+            <div style={{ fontSize: '24px', color: '#9CA3AF' }}>+</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky Table Header - Appears below tabs bar when scrolled */}
+      {activeTab === 'rto-bucket' && showStickyHeader && (
+              <div
+          className="sticky-table-header-wrapper"
+                style={{
+            left: `calc(var(--sidebar-width) + ${stickyHeaderLeft}px)`,
+            width: stickyHeaderWidth
+          }}
+        >
+          <table className="orders-table sticky-table-header" style={{ width: '100%', tableLayout: 'auto' }}>
+            <thead>
+              {(selectAll || selectedOrders.size > 0) ? (
+                <tr>
+                  <th colSpan="10" style={{ padding: '8px 10px', background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={toggleSelectAll}
+                        style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#1f2937', fontFamily: 'Manrope, sans-serif' }}>
+                        {selectedOrders.size} selected
+                      </span>
+                      <button
+                        onClick={handleTagOrders}
+                        style={{
+                          padding: '2px 12px',
+                          background: '#ffffff',
+                          color: '#1f2937',
+                          border: '1px solid #5167D3',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          fontFamily: 'Manrope, sans-serif',
+                  cursor: 'pointer',
+                          boxShadow: '0 2px 0 #291C64',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#f0f4ff';
+                          e.currentTarget.style.borderColor = '#291C64';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#ffffff';
+                          e.currentTarget.style.borderColor = '#5167D3';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                        }}
+                      >
+                        Tag orders
+                      </button>
+                      <button
+                        onClick={handleCreateClip}
+                        style={{
+                          padding: '2px 12px',
+                          background: '#ffffff',
+                          color: '#1f2937',
+                          border: '1px solid #5167D3',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          fontFamily: 'Manrope, sans-serif',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 0 #291C64',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#f0f4ff';
+                          e.currentTarget.style.borderColor = '#291C64';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#ffffff';
+                          e.currentTarget.style.borderColor = '#5167D3';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                }}
+              >
+                        Create Clip
+                      </button>
+                      <button
+                        onClick={() => {
+                          // TODO: Implement export functionality
+                          alert('Export functionality coming soon');
+                        }}
+                        style={{
+                          padding: '2px 12px',
+                          background: '#ffffff',
+                          color: '#1f2937',
+                          border: '1px solid #5167D3',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          fontFamily: 'Manrope, sans-serif',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 0 #291C64',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#f0f4ff';
+                          e.currentTarget.style.borderColor = '#291C64';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#ffffff';
+                          e.currentTarget.style.borderColor = '#5167D3';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                        }}
+                      >
+                        Export
+                      </button>
+                      <button
+                        onClick={() => {
+                          // TODO: Implement more options dropdown
+                          alert('More options coming soon');
+                        }}
+                        style={{
+                          padding: '2px 12px',
+                          background: '#ffffff',
+                          color: '#1f2937',
+                          border: '1px solid #5167D3',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          fontFamily: 'Manrope, sans-serif',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 0 #291C64',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#f0f4ff';
+                          e.currentTarget.style.borderColor = '#291C64';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#ffffff';
+                          e.currentTarget.style.borderColor = '#5167D3';
+                          e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                        }}
+                      >
+                        ⋯
+                      </button>
+              </div>
+                  </th>
+                </tr>
+              ) : (
+                <tr>
+                  <th style={{ width: '40px' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={toggleSelectAll}
+                    />
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('order')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '100px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Order
+                      <span className="sort-arrows">
+                        {sortColumn === 'order' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('date')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '140px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Date
+                      <span className="sort-arrows">
+                        {sortColumn === 'date' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('customer')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '150px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Customer
+                      <span className="sort-arrows">
+                        {sortColumn === 'customer' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('phone')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '120px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Phone
+                      <span className="sort-arrows">
+                        {sortColumn === 'phone' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('address')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '200px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Address
+                      <span className="sort-arrows">
+                        {sortColumn === 'address' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('payment')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '110px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Payment
+                      <span className="sort-arrows">
+                        {sortColumn === 'payment' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('fulfillment')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '120px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Fulfilment
+                      <span className="sort-arrows">
+                        {sortColumn === 'fulfillment' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th 
+                    className="sortable-header"
+                    onClick={() => handleSort('reason')}
+                    style={{ cursor: 'pointer', userSelect: 'none', width: '140px' }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      Reason
+                      <span className="sort-arrows">
+                        {sortColumn === 'reason' ? (
+                          sortDirection === 'asc' ? '↑' : '↓'
+                        ) : (
+                          <span className="sort-arrow-hover">↕</span>
+                        )}
+                      </span>
+                    </span>
+                  </th>
+                  <th style={{ width: '60px' }}></th>
+                </tr>
+              )}
+            </thead>
+          </table>
+        </div>
+        )}
+
+      {/* RTO Bucket Table */}
+      <div className="content-card rto-bucket-card" style={{ marginBottom: '24px' }} ref={tableContainerRef}>
+        <div className="table-container">
+          {loadingRto ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '60px 20px',
+              gap: '20px',
+              minHeight: '400px'
+            }}>
+              <DotLottieReact
+                src="https://lottie.host/d76bbc89-666d-46a0-898b-cc343e4fc5b8/pxRPeuoOie.lottie"
+                loop
+                autoplay
+                style={{ width: '200px', height: '200px' }}
+              />
+              <div style={{
+                fontSize: '16px',
+                fontWeight: 500,
+                color: '#6B7280',
+                fontFamily: 'Manrope, sans-serif'
+              }}>
+                Building Dashboard ...
+              </div>
+            </div>
+          ) : (
+            <table className="orders-table" style={{ width: '100%', tableLayout: 'auto' }}>
+              <thead ref={tableHeaderRef}>
+                {(selectAll || selectedOrders.size > 0) ? (
+                  <tr>
+                    <th colSpan="10" style={{ padding: '8px 10px', background: '#F9FAFB', borderBottom: '1px solid #E5E7EB' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <input
+                          type="checkbox"
+                          checked={selectAll}
+                          onChange={toggleSelectAll}
+                          style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                        />
+                        <span style={{ fontSize: '14px', fontWeight: 500, color: '#1f2937', fontFamily: 'Manrope, sans-serif' }}>
+                          {selectedOrders.size} selected
+            </span>
+              <button
+                onClick={handleTagOrders}
+                          style={{
+                            padding: '2px 12px',
+                            background: '#ffffff',
+                            color: '#1f2937',
+                            border: '1px solid #5167D3',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            fontFamily: 'Manrope, sans-serif',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 0 #291C64',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#f0f4ff';
+                            e.currentTarget.style.borderColor = '#291C64';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#ffffff';
+                            e.currentTarget.style.borderColor = '#5167D3';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                          }}
+              >
+                          Tag orders
+              </button>
+              <button
+                          onClick={() => {
+                            const allSelectedOrderIds = [
+                              ...Array.from(selectedOrders),
+                              ...Array.from(selectedStandardOrders)
+                            ];
+                            if (allSelectedOrderIds.length === 0) {
+                              alert('Please select at least one order');
+                              return;
+                            }
+                            setShowCreateClipModal(true);
+                          }}
+                          style={{
+                            padding: '2px 12px',
+                            background: '#ffffff',
+                            color: '#1f2937',
+                            border: '1px solid #5167D3',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            fontFamily: 'Manrope, sans-serif',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 0 #291C64',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#f0f4ff';
+                            e.currentTarget.style.borderColor = '#291C64';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#ffffff';
+                            e.currentTarget.style.borderColor = '#5167D3';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                          }}
+              >
+                Create Clip
+              </button>
+                        <button
+                          onClick={() => {
+                            // TODO: Implement export functionality
+                            alert('Export functionality coming soon');
+                          }}
+                          style={{
+                            padding: '2px 12px',
+                            background: '#ffffff',
+                            color: '#1f2937',
+                            border: '1px solid #5167D3',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            fontFamily: 'Manrope, sans-serif',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 0 #291C64',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#f0f4ff';
+                            e.currentTarget.style.borderColor = '#291C64';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#ffffff';
+                            e.currentTarget.style.borderColor = '#5167D3';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                          }}
+                        >
+                          Export
+                        </button>
+                        <button
+                          onClick={() => {
+                            // TODO: Implement more options dropdown
+                            alert('More options coming soon');
+                          }}
+                          style={{
+                            padding: '2px 12px',
+                            background: '#ffffff',
+                            color: '#1f2937',
+                            border: '1px solid #5167D3',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            fontFamily: 'Manrope, sans-serif',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 0 #291C64',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#f0f4ff';
+                            e.currentTarget.style.borderColor = '#291C64';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#ffffff';
+                            e.currentTarget.style.borderColor = '#5167D3';
+                            e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                          }}
+                        >
+                          ⋯
+                        </button>
+          </div>
+                    </th>
+                  </tr>
+          ) : (
+                <tr>
+                  <th style={{ width: '40px' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={toggleSelectAll}
+                    />
+                  </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('order')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '100px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Order
+                        <span className="sort-arrows">
+                          {sortColumn === 'order' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('date')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '140px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Date
+                        <span className="sort-arrows">
+                          {sortColumn === 'date' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('customer')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '150px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Customer
+                        <span className="sort-arrows">
+                          {sortColumn === 'customer' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('phone')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '120px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Phone
+                        <span className="sort-arrows">
+                          {sortColumn === 'phone' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('address')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '200px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Address
+                        <span className="sort-arrows">
+                          {sortColumn === 'address' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('payment')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '110px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Payment
+                        <span className="sort-arrows">
+                          {sortColumn === 'payment' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('fulfillment')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '120px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Fulfilment
+                        <span className="sort-arrows">
+                          {sortColumn === 'fulfillment' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('reason')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '140px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Reason
+                        <span className="sort-arrows">
+                          {sortColumn === 'reason' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th 
+                      className="sortable-header"
+                      onClick={() => handleSort('callingStatus')}
+                      style={{ cursor: 'pointer', userSelect: 'none', width: '140px' }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Calling Status
+                        <span className="sort-arrows">
+                          {sortColumn === 'callingStatus' ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="sort-arrow-hover">↕</span>
+                          )}
+                        </span>
+                      </span>
+                    </th>
+                    <th style={{ width: '60px' }}></th>
+                </tr>
+                )}
+              </thead>
+              <tbody>
+                {filteredRtoOrders.length > 0 ? (
+                  filteredRtoOrders.map((order, index) => {
+                    const orderId = order.orderId || order.id;
+                    const isSelected = selectedOrders.has(orderId);
+                    
+                    // For design preview: cycle through all badge types in first 10 rows
+                    const paymentTypes = ['COD', 'Prepaid', 'COD', 'Prepaid', 'COD', 'Prepaid', 'COD', 'Prepaid', 'COD', 'Prepaid'];
+                    const fulfillmentTypes = ['unfulfilled', 'fulfilled', 'unfulfilled', 'fulfilled', 'unfulfilled', 'fulfilled', 'unfulfilled', 'fulfilled', 'unfulfilled', 'fulfilled'];
+                    const reasonTypes = ['bad_address', 'impulsive', 'high_intent', 'sussy', 'spam', 'bad_address', 'impulsive', 'high_intent', 'sussy', 'spam'];
+                    
+                    // Use demo values for first 10 rows, then use actual order data
+                    const demoPayment = index < 10 ? paymentTypes[index] : (order.paymentMethod || order.paymentStatus);
+                    const demoFulfillment = index < 10 ? fulfillmentTypes[index] : (order.fulfillmentStatus);
+                    const demoReason = index < 10 ? reasonTypes[index] : (order.newRtoBucketReason);
+                    
+                    return (
+                      <tr 
+                        key={order.id || order.orderId}
+                        style={{
+                          background: isSelected ? '#F9FAFB' : '#ffffff',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (isSelected) {
+                            e.currentTarget.style.background = '#ffffff';
+                          } else {
+                            e.currentTarget.style.background = '#F9FAFB';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (isSelected) {
+                            e.currentTarget.style.background = '#F9FAFB';
+                          } else {
+                            e.currentTarget.style.background = '#ffffff';
+                          }
+                        }}
+                      >
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleOrderSelection(orderId)}
+                          />
+                        </td>
+                        <td style={{ fontWeight: 600 }}>
+                          {order.orderNumber || order.orderId || order.id}
+                        </td>
+                        <td className="date-cell">{formatDate(order.createdAt)}</td>
+                        <td style={{
+                          maxWidth: '150px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {(order.customerName || '').toString()}
+                        </td>
+                        <td>{order.customerPhone || ''}</td>
+                        <td style={{
+                          maxWidth: '200px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {order.customerAddress || 'N/A'}
+                        </td>
+                        <td>
+                          {getPaymentBadge(demoPayment)}
+                        </td>
+                        <td>
+                          {getFulfillmentBadge(demoFulfillment)}
+                        </td>
+                        <td>
+                          {getReasonBadge(demoReason, orderId)}
+                        </td>
+                        <td>
+                          {(() => {
+                            // Determine calling status based on order data
+                            // Check if order has calls
+                            const hasCalls = order.calls && order.calls.length > 0;
+                            const latestCall = hasCalls ? order.calls[0] : null;
+                            
+                            // Check if there's an active call (callStatus indicates active)
+                            const isOnCall = latestCall && (
+                              latestCall.callStatus === 'connected' || 
+                              latestCall.callStatus === 'talking' ||
+                              latestCall.callStatus === 'on_call'
+                            );
+                            
+                            // Check if order is in queue (has callStatus but not completed)
+                            const isInQueue = order.callStatus && 
+                              order.callStatus !== 'completed' && 
+                              order.callStatus !== 'failed' &&
+                              !isOnCall;
+                            
+                            let status = 'Not initiated';
+                            let statusColor = '#6b7280'; // gray
+                            let statusBg = '#f3f4f6';
+                            
+                            if (isOnCall) {
+                              status = 'On Call/talking';
+                              statusColor = '#059669'; // green
+                              statusBg = '#ecfdf5';
+                            } else if (isInQueue) {
+                              status = 'In queue';
+                              statusColor = '#2563eb'; // blue
+                              statusBg = '#eff6ff';
+                            }
+                            
+                            return (
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '4px 12px',
+                                  borderRadius: '12px',
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  background: statusBg,
+                                  color: statusColor,
+                                  border: `1px solid ${statusColor}40`
+                                }}
+                              >
+                                {status}
+                              </span>
+                            );
+                          })()}
+                        </td>
+                        <td style={{ width: '60px', position: 'relative' }}>
+                          <button
+                            className="btn-icon"
+                            style={{ 
+                              background: 'none', 
+                              border: 'none', 
+                              cursor: 'pointer', 
+                              fontSize: '16px',
+                              padding: '4px 8px',
+                              color: '#6B7280',
+                              fontWeight: 'bold'
+                            }}
+                            title="Actions"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const orderId = order.id || order.orderId;
+                              setOpenActionMenu(openActionMenu === orderId ? null : orderId);
+                            }}
+                          >
+                            ⋯
+                          </button>
+                          {openActionMenu === (order.id || order.orderId) && (
+                            <div 
+                              className="action-menu-dropdown"
+                              style={{
+                                position: 'absolute',
+                                right: '0',
+                                top: '100%',
+                                background: '#ffffff',
+                                border: '1px solid #E5E7EB',
+                                borderRadius: '6px',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                                zIndex: 1000,
+                                minWidth: '120px',
+                                marginTop: '4px'
+                              }}
+                            >
+                              <div
+                                style={{
+                                  padding: '8px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  color: '#1f2937',
+                                  borderBottom: '1px solid #F3F4F6'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#F9FAFB'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#ffffff'}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // TODO: Implement call functionality
+                                  setOpenActionMenu(null);
+                                }}
+                              >
+                                Call
+                              </div>
+                              <div
+                                style={{
+                                  padding: '8px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  color: '#1f2937',
+                                  borderBottom: '1px solid #F3F4F6'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#F9FAFB'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#ffffff'}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // TODO: Implement clip functionality
+                                  setOpenActionMenu(null);
+                                }}
+                              >
+                                Clip
+                              </div>
+                              <div
+                                style={{
+                                  padding: '8px 12px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px',
+                                  color: '#1f2937'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#F9FAFB'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#ffffff'}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // TODO: Implement tag functionality
+                                  setOpenActionMenu(null);
+                                }}
+                              >
+                                Tag
+                              </div>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="9" className="empty-state">
+                      {activeStatCard ? `No orders found for ${getReasonDisplayName(activeStatCard)}` : "No today's unverified orders found"}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+      </div>
+
+        {/* Reason Tooltip Modal */}
+        {hoveredReason && (
+          <div
+            style={{
+              position: 'fixed',
+              top: `${reasonTooltipPosition.top}px`,
+              left: `${reasonTooltipPosition.left}px`,
+              background: '#ffffff',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              zIndex: 10000,
+              minWidth: '280px',
+              maxWidth: '320px',
+              fontFamily: 'Manrope, sans-serif'
+            }}
+            onMouseEnter={() => setHoveredReason(hoveredReason)}
+            onMouseLeave={() => setHoveredReason(null)}
+          >
+            {(() => {
+              const tooltipContent = getReasonTooltipContent(hoveredReason.reason);
+              return (
+                <>
+                  {/* Hand Icon */}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                    <img 
+                      src="/images/image 161.svg" 
+                      alt="Hand icon" 
+                      style={{ width: '32px', height: '32px' }}
+                      />
+                  </div>
+                  
+                  {/* Reason Name */}
+                  <div style={{ 
+                    fontSize: '16px', 
+                    fontWeight: 600, 
+                    color: '#1f2937', 
+                    textAlign: 'center',
+                    marginBottom: '8px'
+                  }}>
+                    {tooltipContent.name}
+                  </div>
+                  
+                  {/* Meaning */}
+                  <div style={{ 
+                    fontSize: '13px', 
+                    color: '#6B7280', 
+                    textAlign: 'center',
+                    marginBottom: '16px'
+                  }}>
+                    {tooltipContent.meaning}
+                  </div>
+                  
+                  {/* Three Icons with Text */}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    gap: '8px',
+                    marginBottom: '16px'
+                  }}>
+                    {tooltipContent.reasons.map((item, idx) => (
+                      <div 
+                        key={idx}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '4px',
+                          flex: 1
+                        }}
+                      >
+                        <img 
+                          src={item.icon} 
+                          alt={item.text}
+                          style={{ width: '20px', height: '20px' }}
+                        />
+                        <span style={{ 
+                          fontSize: '11px', 
+                          color: '#1f2937',
+                          textAlign: 'center'
+                        }}>
+                          {item.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* View Customer Button */}
+                  <button
+                    onClick={() => {
+                      // TODO: Implement view customer functionality
+                      console.log('View Customer clicked for:', hoveredReason.orderId);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '8px 16px',
+                      background: '#ffffff',
+                      color: '#1f2937',
+                      border: '1px solid #5167D3',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      fontFamily: 'Manrope, sans-serif',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 0 #291C64',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#f0f4ff';
+                      e.currentTarget.style.borderColor = '#291C64';
+                      e.currentTarget.style.boxShadow = '0 2px 0 #291C64, inset 0 0 8px rgba(41, 28, 100, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#ffffff';
+                      e.currentTarget.style.borderColor = '#5167D3';
+                      e.currentTarget.style.boxShadow = '0 2px 0 #291C64';
+                    }}
+                  >
+                    View Customer
+                  </button>
+                </>
+              );
+            })()}
+          </div>
+        )}
+        
+        {/* Sticky Bottom Pagination Bar - Attached to table */}
+        <div className="rto-bucket-pagination-bar">
+          <div className="rto-bucket-pagination-content">
+                  <button
+              className="rto-bucket-pagination-btn"
+              onClick={() => loadNewRtoBucketOrders(rtoOrdersPagination.currentPage - 1)}
+              disabled={!rtoOrdersPagination.hasPrev || loadingRto}
+                  >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+                  </button>
+                  <button
+              className="rto-bucket-pagination-btn"
+              onClick={() => loadNewRtoBucketOrders(rtoOrdersPagination.currentPage + 1)}
+              disabled={!rtoOrdersPagination.hasNext || loadingRto}
+                  >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+                  </button>
+            <span className="rto-bucket-pagination-text">
+              {rtoOrdersPagination.currentPage === 1 
+                ? `1-${Math.min(rtoOrdersPagination.limit, rtoOrdersPagination.totalCount)}`
+                : `${(rtoOrdersPagination.currentPage - 1) * rtoOrdersPagination.limit + 1}-${Math.min(rtoOrdersPagination.currentPage * rtoOrdersPagination.limit, rtoOrdersPagination.totalCount)}`
+              } of {rtoOrdersPagination.totalCount}
+            </span>
+                </div>
+        </div>
+      </div>
+        </div>
+      )}
+
+
+      {/* Create Clip Modal */}
+      {showCreateClipModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '24px',
+            borderRadius: '8px',
+            width: '90%',
+            maxWidth: '500px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: 600 }}>Create Clip</h3>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                Clip Name <span style={{ color: 'red' }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={clipName}
+                onChange={(e) => setClipName(e.target.value)}
+                placeholder="Enter clip name"
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                Description (Optional)
+              </label>
+              <textarea
+                value={clipDescription}
+                onChange={(e) => setClipDescription(e.target.value)}
+                placeholder="Enter clip description"
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: '16px', fontSize: '14px', color: '#6B7280' }}>
+              Selected orders: {selectedOrders.size + selectedStandardOrders.size}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  setShowCreateClipModal(false);
+                  setClipName('');
+                  setClipDescription('');
+                }}
+                className="btn btn-secondary btn-sm"
+                disabled={creatingClip}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateClip}
+                className="btn btn-primary btn-sm"
+                disabled={creatingClip || !clipName.trim()}
+              >
+                {creatingClip ? 'Creating...' : 'Create Clip'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isTestShop && (
+        <div className="blur-overlay">
+          <div className="overlay-content">
+            <h2>Connect Your Shopify Store</h2>
+            <p>Connect your store to unlock full dashboard features and view real order data.</p>
+            <button
+              className="connect-btn"
+              onClick={() => window.location.href = `/integrations${shop ? `?shop=${encodeURIComponent(shop)}` : ''}`}
+            >
+              Connect to Shopify
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Dashboard2;

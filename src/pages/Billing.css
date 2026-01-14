@@ -1,0 +1,409 @@
+.billing-page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 10px 20px;
+}
+
+.billing-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.billing-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.billing-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.billing-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.billing-plan-card {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.billing-plan-card:hover {
+  border-color: #4b5cff;
+  box-shadow: 0 8px 24px rgba(75, 92, 255, 0.1);
+}
+
+.billing-plan-card--popular {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-color: #4b5cff;
+  box-shadow: 0 8px 24px rgba(75, 92, 255, 0.15);
+}
+
+.billing-plan-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4b5cff;
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.billing-plan-header {
+  margin-bottom: 24px;
+}
+
+.billing-plan-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.billing-plan-description {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.billing-plan-pricing {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.billing-plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.billing-plan-price-amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.billing-plan-price-unit {
+  font-size: 18px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.billing-plan-volume {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.billing-plan-button {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  margin-bottom: 32px;
+}
+
+.billing-plan-button--primary {
+  background: #4b5cff;
+  color: #ffffff;
+}
+
+.billing-plan-button--primary:hover {
+  background: #3b49e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 92, 255, 0.3);
+}
+
+.billing-plan-button--secondary {
+  background: #ffffff;
+  color: #4b5cff;
+  border: 2px solid #4b5cff;
+}
+
+.billing-plan-button--secondary:hover {
+  background: #f8f9ff;
+  transform: translateY(-1px);
+}
+
+.billing-plan-features {
+  flex: 1;
+}
+
+.billing-plan-features-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+}
+
+.billing-plan-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.billing-plan-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.billing-plan-feature-icon {
+  flex-shrink: 0;
+  color: #10b981;
+  margin-top: 2px;
+}
+
+/* Comparison Table Section */
+.billing-comparison-section {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.billing-comparison-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.billing-comparison-subtitle {
+  font-size: 15px;
+  color: #6b7280;
+  text-align: center;
+  margin: 0 0 32px 0;
+}
+
+.billing-comparison-table-wrapper {
+  overflow-x: auto;
+  margin-top: 24px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.billing-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  min-width: 1400px;
+  font-size: 13px;
+}
+
+.billing-comparison-table thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.billing-comparison-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.billing-comparison-table th:last-child {
+  border-right: none;
+}
+
+.billing-comparison-th-feature {
+  width: 200px;
+  min-width: 180px;
+}
+
+.billing-comparison-th-scalysis {
+  background: #ffffff;
+  border: 2px solid #4b5cff;
+  color: #111827;
+  font-weight: 700;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.billing-scalysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.billing-comparison-th-scalysis img {
+  height: 32px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.billing-comparison-th-scalysis span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.billing-comparison-th-competitor {
+  width: 200px;
+  min-width: 180px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.billing-comparison-th-competitor img {
+  height: 32px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.billing-comparison-th-competitor span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: block;
+  text-align: center;
+}
+
+.billing-comparison-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s;
+}
+
+.billing-comparison-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.billing-comparison-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.billing-comparison-table td {
+  padding: 18px 20px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  vertical-align: top;
+  border-right: 1px solid #e5e7eb;
+}
+
+.billing-comparison-table td.billing-comparison-td-scalysis {
+  color: #111827 !important;
+}
+
+.billing-comparison-table td:last-child {
+  border-right: none;
+}
+
+.billing-comparison-td-feature {
+  font-weight: 600;
+  color: #111827;
+  background: #f9fafb;
+  width: 200px;
+  min-width: 180px;
+}
+
+.billing-comparison-td-scalysis {
+  background: #ffffff;
+  border-left: 4px solid #4b5cff;
+  position: relative;
+  color: #111827;
+}
+
+.billing-comparison-td-scalysis strong {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.billing-comparison-note {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.billing-comparison-td-competitor {
+  color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .billing-title {
+    font-size: 32px;
+  }
+
+  .billing-plans-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .billing-plan-card {
+    padding: 24px;
+  }
+
+  .billing-comparison-title {
+    font-size: 28px;
+  }
+
+  .billing-comparison-subtitle {
+    font-size: 14px;
+  }
+
+  .billing-comparison-table-wrapper {
+    margin-left: -20px;
+    margin-right: -20px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .billing-comparison-table th,
+  .billing-comparison-table td {
+    padding: 16px 12px;
+    font-size: 13px;
+  }
+}
+

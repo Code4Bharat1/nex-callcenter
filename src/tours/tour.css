@@ -1,0 +1,54 @@
+.tour-mask {
+  transition: all 0.3s ease;
+}
+
+.reactour__popover {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  padding: 24px !important;
+  max-width: 320px !important;
+  z-index: 10001 !important;
+}
+
+.reactour__maskWrapper {
+  z-index: 9999 !important;
+}
+
+.reactour__mask {
+  background: rgba(0, 0, 0, 0.75) !important;
+  transition: all 0.3s ease !important;
+  z-index: 9998 !important;
+}
+
+.reactour__maskArea {
+  border-radius: 12px !important;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75) !important;
+}
+
+.reactour__popover {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  padding: 24px !important;
+  max-width: 420px !important;
+  z-index: 10000 !important;
+}
+
+.reactour__mask {
+  background: rgba(0, 0, 0, 0.75) !important;
+  transition: all 0.3s ease !important;
+  z-index: 9998 !important;
+}
+
+.reactour__maskWrapper {
+  z-index: 9997 !important;
+}
+
+.reactour__highlight {
+  border-radius: 12px !important;
+  box-shadow: 0 0 0 4px rgba(75, 92, 255, 0.3) !important;
+  transition: all 0.3s ease !important;
+  z-index: 10000 !important;
+  position: relative;
+}

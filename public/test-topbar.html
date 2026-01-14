@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TopBar Component</title>
+    <link rel="stylesheet" href="/navbar.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-section">
+            <h2>TopBar Component Test</h2>
+            <div id="topbar-root"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Content</h3>
+            <p>This is test content to see how the TopBar looks above it.</p>
+        </div>
+    </div>
+
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- TopBar Component -->
+    <script src="/components/TopBar.js"></script>
+    
+    <!-- Mount the component -->
+    <script>
+        const { createElement: h } = React;
+        
+        function App() {
+            const pageTitle = 'Test Page';
+            const shop = 'test-shop.myshopify.com';
+            
+            return h(TopBar, {
+                pageTitle: pageTitle,
+                shop: shop
+            });
+        }
+        
+        // Mount the React app
+        const root = ReactDOM.createRoot(document.getElementById('topbar-root'));
+        root.render(h(App));
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+.interactive-hover-button {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #4B5CFF;
+  padding: 10px 24px;
+  text-align: center;
+  font-weight: 600;
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  background: #ffffff;
+  color: #1a1a1a;
+  transition: border-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.interactive-hover-button:hover:not(:disabled) {
+  border-color: #ffffff;
+}
+
+.interactive-hover-button--loading {
+  pointer-events: none;
+}
+
+.interactive-hover-button--loading:hover .interactive-hover-button__text,
+.interactive-hover-button--loading:hover .interactive-hover-button__hover-content {
+  transform: none;
+  opacity: 1;
+}
+
+.interactive-hover-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.interactive-hover-button:disabled:hover .interactive-hover-button__text,
+.interactive-hover-button:disabled:hover .interactive-hover-button__hover-content,
+.interactive-hover-button:disabled:hover .interactive-hover-button__dot {
+  transform: none;
+  opacity: 1;
+}
+
+.interactive-hover-button:disabled:hover .interactive-hover-button__dot {
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.interactive-hover-button__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* Expanding dot that fills the button on hover */
+.interactive-hover-button__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #4B5CFF;
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.interactive-hover-button:hover .interactive-hover-button__dot {
+  transform: translate(-50%, -50%) scale(100.8);
+  opacity: 1;
+}
+
+.interactive-hover-button__text {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.interactive-hover-button:hover .interactive-hover-button__text {
+  transform: translateX(48px);
+  opacity: 0;
+}
+
+.interactive-hover-button__hover-content {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transform: translateX(48px);
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: #ffffff;
+}
+
+.interactive-hover-button:hover .interactive-hover-button__hover-content {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.interactive-hover-button__arrow {
+  width: 16px;
+  height: 16px;
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+.interactive-hover-button__hover-content .interactive-hover-button__arrow {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+

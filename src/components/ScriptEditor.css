@@ -1,0 +1,175 @@
+.script-editor-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+  background: white;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  display: block;
+}
+
+/* Ensure Monaco Editor and all its content are fully interactive */
+.script-editor-wrapper,
+.script-editor-wrapper * {
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* Monaco Editor container - direct child */
+.script-editor-wrapper > div {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0;
+}
+
+/* Monaco Editor section */
+.script-editor-wrapper section {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0;
+}
+
+/* Monaco Editor section > div */
+.script-editor-wrapper section > div {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0;
+}
+
+.script-editor-wrapper .monaco-editor {
+  border: none !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0;
+}
+
+/* Monaco Editor Find Widget Positioning - Move from top: 0px to top: 20px */
+.script-editor-wrapper .monaco-editor .find-widget {
+  top: 20px !important;
+}
+
+/* Monaco Editor specific elements - ensure interactivity */
+.script-editor-wrapper .monaco-editor *,
+.script-editor-wrapper .monaco-editor .monaco-editor-background,
+.script-editor-wrapper .monaco-editor .overflow-guard,
+.script-editor-wrapper .monaco-editor .monaco-scrollable-element,
+.script-editor-wrapper .monaco-editor .view-lines,
+.script-editor-wrapper .monaco-editor .view-line,
+.script-editor-wrapper .monaco-editor .inputarea {
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+}
+
+/* Placeholder overlay styling */
+.monaco-placeholder-overlay {
+  position: absolute;
+  top: 0;
+  left: 62px;
+  pointer-events: none !important;
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 24px;
+  z-index: 1;
+  padding-top: 8px;
+  font-family: "'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace";
+}
+
+/* Customize Monaco Editor scrollbar */
+.script-editor-wrapper .monaco-scrollable-element > .scrollbar {
+  background: transparent;
+}
+
+.script-editor-wrapper .monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.script-editor-wrapper .monaco-scrollable-element > .scrollbar > .slider:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Minimap styling */
+.script-editor-wrapper .monaco-editor .minimap {
+  background: #fafafa;
+}
+
+/* Line number styling */
+.script-editor-wrapper .monaco-editor .line-numbers {
+  color: #9ca3af;
+}
+
+/* Selection styling */
+.script-editor-wrapper .monaco-editor .selected-text {
+  background-color: #dbeafe;
+}
+
+/* Monaco Editor internal container */
+.script-editor-wrapper .monaco-editor .monaco-editor-background {
+  background-color: #ffffff !important;
+}
+
+/* Ensure Monaco Editor viewport takes full height */
+.script-editor-wrapper .monaco-editor .overflow-guard {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* All Monaco Editor internal divs */
+.script-editor-wrapper .monaco-editor .overflow-guard > div {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.script-editor-wrapper .monaco-scrollable-element {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Monaco Editor Find Widget Tooltip Positioning - Show tooltips at bottom instead of top */
+/* Target tooltips within find widget */
+.script-editor-wrapper .monaco-editor .find-widget .monaco-tooltip,
+.script-editor-wrapper .monaco-editor .find-widget .monaco-hover,
+.script-editor-wrapper .monaco-editor .find-widget [class*="tooltip"],
+.script-editor-wrapper .monaco-editor .find-widget [class*="hover"] {
+  top: auto !important;
+  bottom: 100% !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Target Monaco's tooltip container that appears on hover */
+.script-editor-wrapper .monaco-editor .find-widget .monaco-tooltip-content,
+.script-editor-wrapper .monaco-editor .find-widget .monaco-hover-content {
+  top: auto !important;
+  bottom: 100% !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Ensure tooltip arrow/pointer is positioned correctly when at bottom */
+.script-editor-wrapper .monaco-editor .find-widget .monaco-tooltip::after,
+.script-editor-wrapper .monaco-editor .find-widget .monaco-hover::after {
+  top: 100% !important;
+  bottom: auto !important;
+  border-top-color: inherit;
+  border-bottom-color: transparent;
+}
+
+/* More specific: target tooltips that appear above find widget buttons */
+.script-editor-wrapper .monaco-editor .find-widget button:hover + .monaco-tooltip,
+.script-editor-wrapper .monaco-editor .find-widget .monaco-button:hover + .monaco-tooltip,
+.script-editor-wrapper .monaco-editor .find-widget .monaco-action-bar .action-item:hover + .monaco-tooltip {
+  top: auto !important;
+  bottom: 100% !important;
+  transform: translateY(-4px) !important;
+}
